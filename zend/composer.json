@@ -3,7 +3,7 @@
     "description": "bug tracking system",
     "license": "Apache-2.0",
 	"minimum-stability": "dev",
-    "require": {
+	"require": {
         "php": ">=5.3.3",
         "zendframework/zendframework": ">2.2",
         "zendframework/zendframework": ">2.2.0rc1",
