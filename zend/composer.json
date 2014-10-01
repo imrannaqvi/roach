@@ -2,6 +2,13 @@
 	"name": "imrannaqvi/roach",
 	"description": "bug tracking system",
 	"license": "Apache-2.0",
+	"type": "project",
+	"authors": [{
+		"name": "Imran Naqvi",
+		"email": "imrannaqvi83@yahoo.com",
+		"homepage": "http://www.imrannaqvi.com/",
+		"role": "Developer"
+	}],
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.3.3",
