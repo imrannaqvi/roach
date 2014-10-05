@@ -28,13 +28,10 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface
 	public function getServiceConfig()
 	{
 		return array(
+			'abstract_factories' => array(
+				'Core\Model\Factory\AbstractFactory',
+			),
 			'factories' => array(
-				'Core\Model\User' =>  function($sm) {
-					return new \Core\Model\User($sm->get('Zend\Db\Adapter\Adapter'));
-				},
-				'Core\Model\Role' =>  function($sm) {
-					return new \Core\Model\Role($sm->get('Zend\Db\Adapter\Adapter'));
-				},
 			),
 		);
 	}
