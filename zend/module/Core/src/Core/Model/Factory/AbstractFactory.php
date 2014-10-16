@@ -8,7 +8,10 @@ class AbstractFactory implements AbstractFactoryInterface
 {
 	public function canCreateServiceWithName( ServiceLocatorInterface $serviceLocator, $name, $requestedName)
 	{
-		return strpos($requestedName, 'Core\\Model\\') === 0 && class_exists($requestedName) ? true : false;
+		return $requestedName !== 'Core\Model\Model' &&
+			strpos($requestedName, 'Core\\Model\\') === 0 &&
+			class_exists($requestedName)
+		? true : false;
 	}
 	
 	public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
