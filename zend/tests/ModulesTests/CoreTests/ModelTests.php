@@ -34,18 +34,28 @@ class ModelTests extends PHPUnit_Framework_TestCase
 		$this->serviceManager = $serviceManagerGrabber->getServiceManager();
 	}
 	
-	public function testModelsAsAService()
+	//all models SHOULD BE accessible as a service
+	public function test_ModelsAsService()
 	{
-		//all models SHOULD BE accessible as a service
 		for($i=0; $i<count($this->models); $i++) {
-			$this->assertInstanceOf($this->namespace.'\\'.$this->models[$i], $this->serviceManager->get($this->namespace.'\\'.$this->models[$i]));
+			$model = $this->namespace.'\\'.$this->models[$i];
+			$this->assertInstanceOf($model, $this->serviceManager->get($model));
+		}
+	}
+	
+	//all models SHOULD extend from base class Model
+	public function test_ModelsExtendBaseClass()
+	{
+		for($i=0; $i<count($this->models); $i++) {
+			$model = $this->namespace.'\\'.$this->models[$i];
+			$this->assertInstanceOf($this->namespace.'\\'.$this->baseClass, $this->serviceManager->get($model));
 		}
 	}
 	
 	/**
 	* @expectedException	Zend\ServiceManager\Exception\ServiceNotFoundException
 	*/
-	public function testBaseClassAsAService()
+	public function test_BaseClassAsService()
 	{
 		//Model base class SHOULD NOT BE accessible as service
 		$this->serviceManager->get($this->namespace.'\\'.$this->baseClass);
