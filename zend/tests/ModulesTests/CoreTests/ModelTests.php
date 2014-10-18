@@ -34,12 +34,22 @@ class ModelTests extends PHPUnit_Framework_TestCase
 		$this->serviceManager = $serviceManagerGrabber->getServiceManager();
 	}
 	
+	/**
+	* @expectedException	Zend\ServiceManager\Exception\ServiceNotFoundException
+	*/
+	public function test_BaseClassAsService()
+	{
+		//Model base class SHOULD NOT BE accessible as service
+		$this->serviceManager->get($this->namespace.'\\'.$this->baseClass);
+	}
+	
 	//all models SHOULD BE accessible as a service
 	public function test_ModelsAsService()
 	{
 		for($i=0; $i<count($this->models); $i++) {
 			$model = $this->namespace.'\\'.$this->models[$i];
-			$this->assertInstanceOf($model, $this->serviceManager->get($model));
+			$instance = $this->serviceManager->get($model);
+			$this->assertInstanceOf($model, $instance);
 		}
 	}
 	
@@ -51,13 +61,23 @@ class ModelTests extends PHPUnit_Framework_TestCase
 			$this->assertInstanceOf($this->namespace.'\\'.$this->baseClass, $this->serviceManager->get($model));
 		}
 	}
-	
-	/**
-	* @expectedException	Zend\ServiceManager\Exception\ServiceNotFoundException
-	*/
-	public function test_BaseClassAsService()
+		
+	//all models SHOULD extend from base class Zend\Db\TableGateway\TableGateway
+	public function test_ModelsExtendZendDbTableGateway()
 	{
-		//Model base class SHOULD NOT BE accessible as service
-		$this->serviceManager->get($this->namespace.'\\'.$this->baseClass);
+		for($i=0; $i<count($this->models); $i++) {
+			$model = $this->namespace.'\\'.$this->models[$i];
+			$this->assertInstanceOf('Zend\Db\TableGateway\TableGateway', $this->serviceManager->get($model));
+		}
+	}
+	
+	//all models SHOULD BE able to access db, correct talbe name and id(PK) is tested
+	public function test_ModelsCanAccessDb()
+	{
+		for($i=0; $i<count($this->models); $i++) {
+			$model = $this->namespace.'\\'.$this->models[$i];
+			$instance = $this->serviceManager->get($model);
+			$this->assertTrue(!! $instance->select(array('id' => 1)));
+		}
 	}
 }
