@@ -2,7 +2,7 @@
 namespace API\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class IndexController extends AbstractActionController
 {
@@ -62,10 +62,9 @@ class IndexController extends AbstractActionController
 				'error' => 'method-not-found'
 			));
 		}
-		header('Content-Type: application/json');
-		die(json_encode(array_merge($out, array(
+		return new JsonModel(array_merge($out, array(
 			'method' => $method,
 			//'config' => $config
-		))));
+		)));
 	}
 }
