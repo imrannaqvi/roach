@@ -21,5 +21,17 @@ class AccessTests extends AbstractHttpControllerTestCase
 		$this->assertControllerName('api\controller\index');
 		$this->assertControllerClass('IndexController');
 		$this->assertMatchedRouteName('api');
+		$this->assertResponseHeaderContains('content-type', 'application/json; charset=utf-8');
+		// get response
+		$response = json_decode($this->getResponse()->getBody());
+		//check if response is json
+		$this->assertTrue(!! $response, 'Response is expected as JSON.');
+		$response = (array) $response;
+		$this->assertArrayHasKey('method', $response);
+		$this->assertEquals('', $response['method']);
+		$this->assertArrayHasKey('error', $response);
+		$this->assertEquals('method-not-found', $response['error']);
+		$this->assertArrayHasKey('response', $response);
+		$this->assertFalse($response['response']);
 	}
 }
