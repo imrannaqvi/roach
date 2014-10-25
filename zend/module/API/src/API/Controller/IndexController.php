@@ -23,7 +23,7 @@ class IndexController extends AbstractActionController
 		//get request
 		$request = $this->getRequest()->getPOST();
 		$method = $request->get('method', '');
-		$data = $request->get('data', array());
+		$params = $request->get('params', array());
 		//get details current request
 		if(array_key_exists($method, $config['methods'])) {
 			$item = $config['methods'][$method];
@@ -34,7 +34,7 @@ class IndexController extends AbstractActionController
 					//check if model method is specified
 					if(array_key_exists('method', $item)) {
 						if(method_exists($model, $item['method'])) {
-							$response = call_user_func_array(array($model, $item['method']), array());
+							$response = call_user_func_array(array($model, $item['method']), array($params));
 						} else {
 							$error = 'model-method-not-found';
 						}
