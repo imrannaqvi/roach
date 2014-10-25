@@ -21,7 +21,7 @@ class IndexController extends AbstractActionController
 		}
 		$config = (array) $config['api'];
 		//get request
-		$request = $this->getRequest()->getQuery();
+		$request = $this->getRequest()->getPOST();
 		$method = $request->get('method', '');
 		$data = $request->get('data', array());
 		//get details current request
