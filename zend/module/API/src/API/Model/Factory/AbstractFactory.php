@@ -16,6 +16,6 @@ class AbstractFactory implements AbstractFactoryInterface
 	
 	public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
 	{
-		return new $requestedName();
+		return new $requestedName($serviceLocator->get('API\Service\AuthenticationService'));
 	}
 }

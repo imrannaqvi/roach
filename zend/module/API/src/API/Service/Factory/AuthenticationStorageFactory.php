@@ -9,6 +9,6 @@ class AuthenticationStorageFactory implements FactoryInterface
 {
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
-		return new \API\Service\AuthenticationStorage();
+		return new \API\Service\AuthenticationStorage($serviceLocator->get('Core\Model\User'));
 	}
 }
