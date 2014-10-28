@@ -22,4 +22,10 @@ class Index extends Model
 			'token' => $token
 		);
 	}
+	
+	public function logout()
+	{
+		$this->authentication->getStorage()->clear();
+		return true;
+	}
 }

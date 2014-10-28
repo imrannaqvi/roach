@@ -6,7 +6,8 @@ return array(
 			'methods' => array(
 				'login' => array(
 					'model' => 'API\Model\Index',
-					'method' => 'login'
+					'method' => 'login',
+					'authentication_required' => false
 				),
 				'logout' => array(
 					'model' => 'API\Model\Index',

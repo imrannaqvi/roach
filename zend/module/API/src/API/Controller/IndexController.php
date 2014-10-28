@@ -12,6 +12,7 @@ class IndexController extends AbstractActionController
 		$response = false;
 		//get config
 		$config = $this->getServiceLocator()->get('Config');
+		$authentication = $this->getServiceLocator()->get('API\Service\AuthenticationService');
 		if(! array_key_exists('roach', (array) $config)) {
 			throw new \Exception('config.roach not found.');
 		}
@@ -27,25 +28,36 @@ class IndexController extends AbstractActionController
 		//get details current request
 		if(array_key_exists($method, $config['methods'])) {
 			$item = $config['methods'][$method];
-			//check if model is specified
-			if(array_key_exists('model', $item)) {
-				try {
-					$model = $this->getServiceLocator()->get($item['model']);
-					//check if model method is specified
-					if(array_key_exists('method', $item)) {
-						if(method_exists($model, $item['method'])) {
-							$response = call_user_func_array(array($model, $item['method']), array($params));
-						} else {
-							$error = 'model-method-not-found';
-						}
-					} else {
-						$error = 'model-method-not-defined';
-					}
-				} catch( \Zend\ServiceManager\Exception\ServiceNotFoundException $e) {
-						$error = 'model-not-found-as-service';
-				}
+			if(! array_key_exists('authentication_required', $item)) {
+				$authentication_required = true;
 			} else {
-				$error = 'model-not-defined';
+				$authentication_required = $item['authentication_required'];
+			}
+			$user = $authentication->getStorage()->read($this->getRequest()->getHeader('Authorization'));
+			if($authentication_required && !$user) {
+				$error = 'authentication-required';
+			}
+			if(! $error) {
+				//check if model is specified
+				if(array_key_exists('model', $item)) {
+					try {
+						$model = $this->getServiceLocator()->get($item['model']);
+						//check if model method is specified
+						if(array_key_exists('method', $item)) {
+							if(method_exists($model, $item['method'])) {
+								$response = call_user_func_array(array($model, $item['method']), array($params));
+							} else {
+								$error = 'model-method-not-found';
+							}
+						} else {
+							$error = 'model-method-not-defined';
+						}
+					} catch( \Zend\ServiceManager\Exception\ServiceNotFoundException $e) {
+							$error = 'model-not-found-as-service';
+					}
+				} else {
+					$error = 'model-not-defined';
+				}
 			}
 		} else {
 			$error = 'method-not-found';

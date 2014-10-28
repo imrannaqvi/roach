@@ -17,8 +17,16 @@ class AuthenticationStorage implements StorageInterface
 		$this->table = $table;
 	}
 	
-	public function read()
+	public function read($header = false)
 	{
+		if($header && get_class($header) === 'Zend\Http\Header\Authorization') {
+			$rd = $this->table->select(array(
+				'token' => substr($header->getFieldValue(), 6)
+			));
+			if($rd && $rd->count()) {
+				$this->contents = $rd->current();
+			}
+		}
 		return $this->contents;
 	}
 	
@@ -53,6 +61,13 @@ class AuthenticationStorage implements StorageInterface
 	
 	public function clear()
 	{
+		if($this->contents && $this->contents->id){
+			$this->table->update(array(
+				'token' => ''
+			), array(
+				'id' => $this->contents->id
+			));
+		}
 		$this->contents = null;
 	}
 }
