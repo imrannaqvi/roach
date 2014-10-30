@@ -32,9 +32,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface
 				'Core\Model\Factory\AbstractFactory',
 			),
 			'factories' => array(
-				'Core\Service\Acl' => function($sm) {
-					return new \Core\Service\Acl(include './config/acl.config.php');
-				}
+				'Core\Service\Acl' => 'Core\Service\Factory\AclFactory'
 			),
 		);
 	}
