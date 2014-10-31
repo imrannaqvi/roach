@@ -56,10 +56,10 @@ return array(
 		'project_manager' => array(
 			'*' => 'deny',
 			'extends' => 'project_user',
-			'project'  array(
+			'project' => array(
 				'allow' => array(
 					'assigned.read',
-					'assigned.update'
+					'assigned.update',
 					'workflow.update',
 					'user.add', 'user.remove'
 				),
