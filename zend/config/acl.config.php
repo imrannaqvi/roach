@@ -32,73 +32,86 @@ return array(
 		'root' => array(
 			'*' => 'allow'
 		),
-		'orgnisation_manager' => array(
+		'organisation_manager' => array(
 			'*' => 'deny',
+			'title' => 'Organisation Manager', 
 			'extends' => 'project_manager',
-			'organisation' => array(
-				'allow' => array(
-					'read',
-					'update'
+			'permissions' => array(
+				'organisation' => array(
+					'allow' => array(
+						'read',
+						'update'
+					),
+				),
+				'role' => array(
+					'allow' => true
+				),
+				'project' => array(
+					'allow' => array(
+						'read',
+						'create'
+					)
+				),
+				'workflow' =>  array(
+					'allow' => true
+				),
+				'task' =>  array(
+					'allow' => true
 				),
 			),
-			'role' => array(
-				'allow' => true
-			),
-			'project' => array(
-				'allow' => array(
-					'read',
-					'create'
-				)
-			),
-			'workflow' => true,
-			'task' => true,
 		),
 		'project_manager' => array(
 			'*' => 'deny',
+			'title' => 'Project Manager',
 			'extends' => 'project_user',
-			'project' => array(
-				'allow' => array(
-					'assigned.read',
-					'assigned.update',
-					'workflow.update',
-					'user.add', 'user.remove'
+			'permissions' => array(
+				'project' => array(
+					'allow' => array(
+						'assigned.read',
+						'assigned.update',
+						'workflow.update',
+						'user.add', 'user.remove'
+					),
 				),
-			),
-			'task' => array(
-				'allow' => array(
-					'assign'
-				)
+				'task' => array(
+					'allow' => array(
+						'assign'
+					)
+				),
 			),
 		),
 		'project_user' => array(
 			'*' => 'deny',
-			'task' => array(
-				'allow' => array(
-					'read',
-					'create',
-					'created.read',
-					'created.update',
-					'created.delete',
-					'assigned.read',
-					'assigned.update'
+			'title' => 'Project User',
+			'permissions' => array(
+				'task' => array(
+					'allow' => array(
+						'read',
+						'create',
+						'created.read',
+						'created.update',
+						'created.delete',
+						'assigned.read',
+						'assigned.update'
+					),
 				),
-			),
-			'comment' => array(
-				'allow' => array(
-					'read',
-					'create',
-					'created.read',
-					'created.update',
-					'created.delete'
+				'comment' => array(
+					'allow' => array(
+						'read',
+						'create',
+						'created.read',
+						'created.update',
+						'created.delete'
+					),
 				),
-			),
-			'attachment' => array(
-				'allow' => array(
-					'read',
-					'create',
-					'created.read',
-					'created.update',
-					'created.delete'
+				'attachment' => array(
+					'allow' => array(
+						'read',
+						'create',
+						'created.read',
+						'created.update',
+						'created.delete'
+					),
 				),
 			),
 		),

@@ -19,5 +19,18 @@ class AclTests extends PHPUnit_Framework_TestCase
 	public function test_BaseClass()
 	{
 		$this->assertInstanceOf('Core\Service\Acl', $this->acl);
+		$this->assertInstanceOf('Zend\Permissions\Acl\Acl', $this->acl);
+	}
+	
+	public function test_Resourses()
+	{
+		$config = $this->acl->getConfig();
+		foreach($config['resources'] as $resource => $permissions) {
+			//has resources
+			$this->assertTrue($this->acl->hasResource($resource));
+			for($i=0; $i<count($permissions); $i++) {
+				$this->assertTrue($this->acl->hasResource($resource.'.'.$permissions[$i]));
+			}
+		}
 	}
 }
