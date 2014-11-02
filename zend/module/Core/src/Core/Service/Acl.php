@@ -11,27 +11,48 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	public function __construct($config)
 	{
 		$this->config = $config;
+		$this->initConfig();
+		$this->registerResources();
+		$this->registerDefaultRoles();
+	}
+	
+	protected function initConfig()
+	{
 		//add resources and permissions as child resources
 		foreach($this->config['resources'] as $resource => $permissions) {
 			//merge common permissions
-			$permissions = $this->config['resources'][$resource] = array_merge($this->config['common_permissions'], $permissions);
+			$this->config['resources'][$resource] = array_merge(
+				$this->config['common_permissions'],
+				$permissions
+			);
+		}
+	}
+	
+	protected function registerResources()
+	{
+		foreach($this->config['resources'] as $resource => $permissions) {
+			$permissions = $this->config['resources'][$resource];
 			//add resources
 			$this->addResource($resource);
 			for($i=0; $i<count($permissions); $i++) {
 				$this->addResource(new Resource($resource.'.'.$permissions[$i]), $resource);
 			}
 		}
+	}
+	
+	protected function registerDefaultRoles()
+	{
 		//default roles
 		$roles = array_key_exists('roles', $this->config) ? $this->config['roles'] :  array();
 		//print_r($roles);
 		foreach($roles as $key => $value) {
 			if(! $this->hasRole($key)) {
-				$this->addRoleFromConfig($key, $value);
+				$this->addDefaultRoleFromConfig($key, $value);
 			}
 		}
 	}
 	
-	public function addRoleFromConfig($key, $details = null)
+	protected function addDefaultRoleFromConfig($key, $details = null)
 	{
 		//get details if not passed
 		if(
@@ -46,7 +67,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		//create and add role in acl
 		$role = new Role($key);
 		if($extends && !$this->hasRole($extends)) {
-			$this->addRoleFromConfig($extends);
+			$this->addDefaultRoleFromConfig($extends);
 		}
 		$this->addRole($role, $extends);
 		//allow or deny all if

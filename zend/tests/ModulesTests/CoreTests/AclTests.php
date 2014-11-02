@@ -33,4 +33,19 @@ class AclTests extends PHPUnit_Framework_TestCase
 			}
 		}
 	}
+	
+	public function test_Roles()
+	{
+		$config = $this->acl->getConfig();
+		//default roles
+		$roles = array_key_exists('roles', $config) ? $config['roles'] :  array();
+		foreach($roles as $key => $value) {
+			//check if roles exists
+			$this->assertTrue($this->acl->hasRole($key));
+			//check if it inherits from another role
+			if(array_key_exists('extends', $value)) {
+				$this->assertTrue($this->acl->inheritsRole($key, $value['extends']));
+			}
+		}
+	}
 }
