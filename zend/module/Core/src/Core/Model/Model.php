@@ -15,4 +15,12 @@ class Model extends TableGateway
 		parent::__construct($this->table, $adapter);
 		$this->acl = $acl;
 	}
+	
+	public function insert($data)
+	{
+		if( parent::insert($data)) {
+			return (int) $this->getLastInsertValue();
+		}
+		return null;
+	}
 }
