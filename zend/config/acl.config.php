@@ -30,11 +30,14 @@ return array(
 	//default roles 
 	'roles' => array(
 		'root' => array(
+			'name' => 'root',
+			'type' => 'global',
 			'*' => 'allow'
 		),
 		'organisation_manager' => array(
 			'*' => 'deny',
-			'title' => 'Organisation Manager', 
+			'type' => 'organisation',
+			'name' => 'Organisation Manager', 
 			'extends' => 'project_manager',
 			'permissions' => array(
 				'organisation' => array(
@@ -62,7 +65,8 @@ return array(
 		),
 		'project_manager' => array(
 			'*' => 'deny',
-			'title' => 'Project Manager',
+			'type' => 'project',
+			'name' => 'Project Manager',
 			'extends' => 'project_user',
 			'permissions' => array(
 				'project' => array(
@@ -82,7 +86,8 @@ return array(
 		),
 		'project_user' => array(
 			'*' => 'deny',
-			'title' => 'Project User',
+			'type' => 'project',
+			'name' => 'Project User',
 			'permissions' => array(
 				'task' => array(
 					'allow' => array(

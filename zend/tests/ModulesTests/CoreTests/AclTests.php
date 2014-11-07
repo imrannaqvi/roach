@@ -37,6 +37,7 @@ class AclTests extends PHPUnit_Framework_TestCase
 	public function test_Roles()
 	{
 		$config = $this->acl->getConfig();
+		$this->acl->registerDefaultRoles();
 		//default roles
 		$roles = array_key_exists('roles', $config) ? $config['roles'] :  array();
 		foreach($roles as $key => $value) {

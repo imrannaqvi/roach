@@ -7,13 +7,13 @@ use Zend\Permissions\Acl\Resource\GenericResource as Resource;
 class Acl extends \Zend\Permissions\Acl\Acl
 {
 	private $config = array();
+	private $user = null;
 	
 	public function __construct($config)
 	{
 		$this->config = $config;
 		$this->initConfig();
 		$this->registerResources();
-		$this->registerDefaultRoles();
 	}
 	
 	protected function initConfig()
@@ -40,7 +40,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
-	protected function registerDefaultRoles()
+	public function registerDefaultRoles()
 	{
 		//default roles
 		$roles = array_key_exists('roles', $this->config) ? $this->config['roles'] :  array();
@@ -102,6 +102,30 @@ class Acl extends \Zend\Permissions\Acl\Acl
 				}
 			}
 		}
+	}
+	
+	function setUser($user)
+	{
+		$this->user = $user;
+		$this->loadUserRoleWithPermissions();
+	}
+	
+	protected function loadUserRoleWithPermissions()
+	{
+		if($this->user->default_role && !$this->user->role_id) {
+			if(! $this->hasRole($this->user->default_role)) {
+				$this->addDefaultRoleFromConfig($this->user->default_role);
+			}
+		} elseif( $this->user->role_id ) {
+			$this->addRoleFromModel($this->user->role_id);
+		} else {
+			throw new \Exception('role not defined for user.');
+		}
+	}
+	
+	protected function addRoleFromModel($role_id)
+	{
+		
 	}
 	
 	public function getConfig()
