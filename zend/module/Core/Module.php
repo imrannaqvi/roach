@@ -32,7 +32,8 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface
 				'Core\Model\Factory\AbstractFactory',
 			),
 			'factories' => array(
-				'Core\Service\Acl' => 'Core\Service\Factory\AclFactory'
+				'Core\Service\Acl' => 'Core\Service\Factory\AclFactory',
+				'Core\Service\LazyLoader\Acl' => 'Core\Service\LazyLoader\Factory\AclFactory',
 			),
 		);
 	}

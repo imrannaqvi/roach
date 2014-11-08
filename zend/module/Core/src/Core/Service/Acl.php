@@ -3,13 +3,14 @@ namespace Core\Service;
 
 use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Zend\Permissions\Acl\Resource\GenericResource as Resource;
+use Core\Model;
 
 class Acl extends \Zend\Permissions\Acl\Acl
 {
 	private $config = array();
 	private $user = null;
 	
-	public function __construct($config)
+	public function __construct($config, Model\User $model_user, Model\Role $model_role)
 	{
 		$this->config = $config;
 		$this->initConfig();

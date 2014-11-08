@@ -16,6 +16,9 @@ class AbstractFactory implements AbstractFactoryInterface
 	
 	public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
 	{
-		return new $requestedName($serviceLocator->get('Zend\Db\Adapter\Adapter'), $serviceLocator->get('Core\Service\Acl'));
+		return new $requestedName(
+			$serviceLocator->get('Zend\Db\Adapter\Adapter'),
+			$serviceLocator->get('Core\Service\LazyLoader\Acl')
+		);
 	}
 }
