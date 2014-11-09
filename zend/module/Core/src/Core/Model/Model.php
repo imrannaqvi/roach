@@ -8,6 +8,7 @@ use \Core\Service\LazyLoader;
 class Model extends TableGateway
 {
 	public $table;
+	protected $idColumn = 'id';
 	protected $aclLazyLoader;
 	protected $acl;
 	
@@ -26,5 +27,23 @@ class Model extends TableGateway
 			return (int) $this->getLastInsertValue();
 		}
 		return null;
+	}
+	
+	public function fetchOne($where = null)
+	{
+		$select = $this->sql->select();
+		$select->limit(1);
+		$rs = $this->select($where);
+		if($rs && $rs->count()) {
+			return $rs->current();
+		}
+		return null;
+	}
+	
+	public function fetchById($id)
+	{
+		return $this->fetchOne(array(
+			$this->idColumn => $id
+		));
 	}
 }
