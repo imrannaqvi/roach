@@ -63,6 +63,11 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		) {
 			$details = (array) $this->config['roles'][$key];
 		}
+		if(! $details) {
+			throw new AclException('"'.$key.'" Role not found in config.');
+		}
+		print_r($key);
+		var_dump($details);
 		//check if extends form other roles
 		$extends = array_key_exists('extends', (array) $details) ? $details['extends'] : null;
 		//create and add role in acl
