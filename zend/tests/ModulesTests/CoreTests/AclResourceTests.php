@@ -17,18 +17,11 @@ class AclResourceTests extends PHPUnit_Framework_TestCase
 		$this->acl = $this->serviceManager->get('Core\Service\Acl');
 	}
 	
+	/**
+	* @expectedException	Zend\Permissions\Acl\Exception\InvalidArgumentException
+	*/
 	public function test_WrongResource()
 	{
-		$this->acl->registerDefaultRoles();
-		$roles = $this->acl->getRoles();
-		if(count($roles)) {
-			try{
-				$this->acl->isAllowed($roles[0], 'this.should.not.be.a.resource');
-			} catch(InvalidArgumentException $e) {
-				$this->assertTrue(true);
-				return;
-			}
-			$this->assertTrue(false);
-		}
+		$this->acl->getResource('this.should.not.be.a.resource');
 	}
 }
