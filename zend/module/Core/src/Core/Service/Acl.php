@@ -9,10 +9,18 @@ class Acl extends \Zend\Permissions\Acl\Acl
 {
 	private $config = array();
 	private $user = null;
+	private $model_user;
+	private $model_role;
+	
+	const ERRCODE_ROLE_NOT_SET_FOR_USER = 10;
+	const ERRCODE_DEFUAL_ROLE_NOT_FOUND = 20;
+	const ERRCODE_ROLE_NOT_FOUND_IN_MODEL = 30;
 	
 	public function __construct($config, Model\User $model_user, Model\Role $model_role)
 	{
 		$this->config = $config;
+		$this->model_user = $model_user;
+		$this->model_role = $model_role;
 		$this->initConfig();
 		$this->registerResources();
 	}
@@ -47,9 +55,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$roles = array_key_exists('roles', $this->config) ? $this->config['roles'] :  array();
 		//print_r($roles);
 		foreach($roles as $key => $value) {
-			if(! $this->hasRole($key)) {
-				$this->addDefaultRoleFromConfig($key, $value);
-			}
+			$this->addDefaultRoleFromConfig($key, $value);
 		}
 	}
 	
@@ -64,7 +70,11 @@ class Acl extends \Zend\Permissions\Acl\Acl
 			$details = (array) $this->config['roles'][$key];
 		}
 		if(! $details) {
-			throw new AclException('"'.$key.'" Role not found in config.');
+			throw new AclException('"'.$key.'" Role not found in config.', self::ERRCODE_DEFUAL_ROLE_NOT_FOUND);
+		}
+		//return if role already exists
+		if($this->hasRole($key)) {
+			return;
 		}
 		//check if extends form other roles
 		$extends = array_key_exists('extends', (array) $details) ? $details['extends'] : null;
@@ -116,20 +126,23 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	
 	protected function loadUserRoleWithPermissions()
 	{
-		if($this->user->default_role && !$this->user->role_id) {
-			if(! $this->hasRole($this->user->default_role)) {
-				$this->addDefaultRoleFromConfig($this->user->default_role);
-			}
-		} elseif( $this->user->role_id ) {
-			$this->addRoleFromModel($this->user->role_id);
-		} else {
-			throw new \Exception('role not defined for user.');
+		//if role from model
+		if( $this->user->role_id ) {
+			return $this->addRoleFromModel($this->user->role_id);
 		}
+		//if default role
+		if($this->user->default_role) {
+			return $this->addDefaultRoleFromConfig($this->user->default_role);
+		}
+		throw new AclException('role not defined for user.', self::ERRCODE_ROLE_NOT_SET_FOR_USER);
 	}
 	
 	protected function addRoleFromModel($role_id)
 	{
-		
+		$role = $this->model_role->fetchById($role_id);
+		if(! $role) {
+			throw new AclException("role '$role_id' not found in model.", self::ERRCODE_ROLE_NOT_FOUND_IN_MODEL);
+		}
 	}
 	
 	public function getConfig()
