@@ -46,4 +46,11 @@ class Model extends TableGateway
 			$this->idColumn => $id
 		));
 	}
+	
+	public function deleteById($id)
+	{
+		return $this->delete(array(
+			$this->idColumn => $id
+		));
+	}
 }
