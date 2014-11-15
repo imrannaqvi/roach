@@ -51,4 +51,32 @@ class AclRoleTests extends PHPUnit_Framework_TestCase
 			'role_id' => 1234
 		));
 	}
+	
+	/**
+	* @expectedException	Core\Service\AclException
+	* @expectedExceptionCode	20
+	*/
+	public function test_UserWithRoleIdWithWrongDefaultRole()
+	{
+		$model_role = $this->serviceManager->get('Core\Model\Role');
+		//create a role for testing
+		$uid = md5(time());
+		$role_id = $model_role->insert(array(
+			'name' => 'testing.role.'.$uid,
+			//'parent_id' => 1,
+			'parent_default_role' => 'this.wrong.default.role'
+		));
+		//check if role added
+		$this->assertTrue((boolean) $role_id);
+		//set user
+		$this->acl->setUser((object) array(
+			'default_role' => null,
+			'role_id' => $role_id
+		));
+		//delete testing role
+		$this->assertTrue((boolean) $model_role->deleteById(array(
+			'id' => $role_id
+		)));
+		print_r($this->acl->getRoles());
+	}
 }

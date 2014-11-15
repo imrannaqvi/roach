@@ -9,8 +9,10 @@ class Acl extends \Zend\Permissions\Acl\Acl
 {
 	private $config = array();
 	private $user = null;
+	private $current_role;
 	private $model_user;
 	private $model_role;
+	
 	
 	const ERRCODE_ROLE_NOT_SET_FOR_USER = 10;
 	const ERRCODE_DEFUAL_ROLE_NOT_FOUND = 20;
@@ -57,6 +59,28 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		foreach($roles as $key => $value) {
 			$this->addDefaultRoleFromConfig($key, $value);
 		}
+	}
+	
+		
+	function setUser($user)
+	{
+		$this->user = $user;
+		$this->loadUserRoleWithPermissions();
+	}
+	
+	protected function loadUserRoleWithPermissions()
+	{
+		//if role from model
+		if( $this->user->role_id ) {
+			$this->current_role = $this->user->role_id;
+			return $this->addRoleFromModel($this->user->role_id);
+		}
+		//if default role
+		if($this->user->default_role) {
+			$this->current_role = $this->user->default_role;
+			return $this->addDefaultRoleFromConfig($this->user->default_role);
+		}
+		throw new AclException('role not defined for user.', self::ERRCODE_ROLE_NOT_SET_FOR_USER);
 	}
 	
 	protected function addDefaultRoleFromConfig($key, $details = null)
@@ -118,31 +142,31 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
-	function setUser($user)
-	{
-		$this->user = $user;
-		$this->loadUserRoleWithPermissions();
-	}
-	
-	protected function loadUserRoleWithPermissions()
-	{
-		//if role from model
-		if( $this->user->role_id ) {
-			return $this->addRoleFromModel($this->user->role_id);
-		}
-		//if default role
-		if($this->user->default_role) {
-			return $this->addDefaultRoleFromConfig($this->user->default_role);
-		}
-		throw new AclException('role not defined for user.', self::ERRCODE_ROLE_NOT_SET_FOR_USER);
-	}
-	
 	protected function addRoleFromModel($role_id)
 	{
 		$role = $this->model_role->fetchById($role_id);
 		if(! $role) {
 			throw new AclException("role '$role_id' not found in model.", self::ERRCODE_ROLE_NOT_FOUND_IN_MODEL);
 		}
+		//return if role already exists
+		if($this->hasRole($role_id)) {
+			return;
+		}
+		//check if extends form other roles
+		$extends = $role->parent_id ? $role->parent_id : ( 
+			$role->parent_default_role ? $role->parent_default_role : null
+		);
+		//create and add role in acl
+		$role = new Role($role_id);
+		if($extends && !$this->hasRole($extends)) {
+			if((int) $extends) {
+				$this->addRoleFromModel($extends);
+			} else {
+				$this->addDefaultRoleFromConfig($extends);
+			}
+		}
+		$this->addRole($role, $extends);
+		//TODO: add permissions to role
 	}
 	
 	public function getConfig()
