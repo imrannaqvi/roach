@@ -40,7 +40,7 @@ class Model extends TableGateway
 		return null;
 	}
 	
-	public function fetchById($id)
+	public function fetchOneById($id)
 	{
 		return $this->fetchOne(array(
 			$this->idColumn => $id
