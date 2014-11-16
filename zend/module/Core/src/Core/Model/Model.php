@@ -40,6 +40,12 @@ class Model extends TableGateway
 		return null;
 	}
 	
+	public function fetchAll($where = null)
+	{
+		$rs = $this->select($where);
+		return $rs->toArray();
+	}
+	
 	public function fetchOneById($id)
 	{
 		return $this->fetchOne(array(

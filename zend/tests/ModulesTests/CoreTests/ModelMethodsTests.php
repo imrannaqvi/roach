@@ -43,5 +43,40 @@ class ModelMethodsTests extends PHPUnit_Framework_TestCase
 		$this->assertNull($user_model->fetchOneById($id));
 	}
 	
-	
+	public function test_fetchAllDeleteById()
+	{
+		$user_model = $this->serviceManager->get('Core\Model\User');
+		//fetch zero number of records
+		$all = $user_model->fetchAll(array(
+			'token' => 'this.should.not.be.a.valid.token'
+		));
+		$this->assertInternalType('array', $all);
+		$this->assertEquals(0, count($all));
+		## fetch non-zero number of records
+		//1 - create user records
+		$ids = array();
+		for($i=0; $i<3; $i++) {
+			$uid = md5(time().rand());
+			$id = $user_model->insert(array(
+				'username' => $uid,
+				'password' =>  md5($uid),
+				'email' => $uid.'@yahoo.com',
+				'status' => 'active'
+			));
+			$ids[] = $id;
+			//test if user was created
+			$this->assertTrue((boolean) $id);
+		}
+		//fetchAll should return count($ids) records
+		$all = $user_model->fetchAll(array(
+			'id' => $ids
+		));
+		$this->assertEquals(count($ids), count($all));
+		//deleteById and fetchAll, should return zero records
+		$user_model->deleteById($ids);
+		$all = $user_model->fetchAll(array(
+			'id' => $ids
+		));
+		$this->assertEquals(0, count($all));
+	}
 }
