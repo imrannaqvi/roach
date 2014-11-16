@@ -144,7 +144,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	
 	protected function addRoleFromModel($role_id)
 	{
-		$role = $this->model_role->fetchById($role_id);
+		$role = $this->model_role->fetchOneById($role_id);
 		if(! $role) {
 			throw new AclException("role '$role_id' not found in model.", self::ERRCODE_ROLE_NOT_FOUND_IN_MODEL);
 		}
