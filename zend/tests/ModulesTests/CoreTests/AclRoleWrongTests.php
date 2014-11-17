@@ -4,7 +4,7 @@ namespace ModulesTests\CoreTests\Model;
 use PHPUnit_Framework_TestCase;
 use ModulesTests\ServiceManagerGrabber;
 
-class AclRoleTests extends PHPUnit_Framework_TestCase
+class AclRoleWrongTests extends PHPUnit_Framework_TestCase
 {
 	protected $serviceManager;
 	protected $acl;
@@ -73,10 +73,5 @@ class AclRoleTests extends PHPUnit_Framework_TestCase
 			'default_role' => null,
 			'role_id' => $role_id
 		));
-		//delete testing role
-		$this->assertTrue((boolean) $model_role->deleteById(array(
-			'id' => $role_id
-		)));
-		print_r($this->acl->getRoles());
 	}
 }
