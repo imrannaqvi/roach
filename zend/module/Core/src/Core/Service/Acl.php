@@ -9,20 +9,28 @@ class Acl extends \Zend\Permissions\Acl\Acl
 {
 	private $config = array();
 	private $user = null;
-	private $current_role;
+	private $active_role;
 	private $model_user;
 	private $model_role;
-	
+	private $model_rolePermission;
 	
 	const ERRCODE_ROLE_NOT_SET_FOR_USER = 10;
 	const ERRCODE_DEFUAL_ROLE_NOT_FOUND = 20;
 	const ERRCODE_ROLE_NOT_FOUND_IN_MODEL = 30;
+	const ERRCODE_USER_NOT_SET = 110;
 	
-	public function __construct($config, Model\User $model_user, Model\Role $model_role)
-	{
+	public function __construct(
+		$config,
+		Model\User $model_user,
+		Model\Role $model_role,
+		Model\RolePermission $model_rolePermission
+	) {
 		$this->config = $config;
+		//models
 		$this->model_user = $model_user;
 		$this->model_role = $model_role;
+		$this->model_rolePermission = $model_rolePermission;
+		//initializations
 		$this->initConfig();
 		$this->registerResources();
 	}
@@ -72,12 +80,12 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	{
 		//if role from model
 		if( $this->user->role_id ) {
-			$this->current_role = $this->user->role_id;
+			$this->active_role = $this->user->role_id;
 			return $this->addRoleFromModel($this->user->role_id);
 		}
 		//if default role
 		if($this->user->default_role) {
-			$this->current_role = $this->user->default_role;
+			$this->active_role = $this->user->default_role;
 			return $this->addDefaultRoleFromConfig($this->user->default_role);
 		}
 		throw new AclException('role not defined for user.', self::ERRCODE_ROLE_NOT_SET_FOR_USER);
@@ -166,7 +174,25 @@ class Acl extends \Zend\Permissions\Acl\Acl
 			}
 		}
 		$this->addRole($role, $extends);
-		//TODO: add permissions to role
+		//add permissions to role
+		$role_permissions = $this->model_rolePermission->fetchAll(array(
+			'role_id' => $role_id
+		));
+		for($i=0; $i<count($role_permissions); $i++) {
+			if($role_permissions[$i]['access'] == 'allow') {
+				$this->allow($role, $role_permissions[$i]['permission']);
+			} else {
+				$this->deny($role, $role_permissions[$i]['permission']);
+			}
+		}
+	}
+	
+	public function isAllowedToActiveRole($resource)
+	{
+		if(! $this->active_role) {
+			throw new AclException("Acl User not set.", self::ERRCODE_USER_NOT_SET);
+		}
+		return $this->isAllowed($this->active_role, $resource);
 	}
 	
 	public function getConfig()

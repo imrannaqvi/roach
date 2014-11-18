@@ -11,7 +11,8 @@ class AclFactory implements FactoryInterface
 		return new \Core\Service\Acl(
 			include './config/acl.config.php',
 			$serviceLocator->get('Core\Model\User'),
-			$serviceLocator->get('Core\Model\Role')
+			$serviceLocator->get('Core\Model\Role'),
+			$serviceLocator->get('Core\Model\RolePermission')
 		);
 	}
 }
