@@ -14,8 +14,6 @@ class AclRoleCorrectTests extends PHPUnit_Framework_TestCase
 		$serviceManagerGrabber = new ServiceManagerGrabber();
 		$this->serviceManager = $serviceManagerGrabber->getServiceManager();
 		$this->acl = $this->serviceManager->get('Core\Service\Acl');
-		$this->acl->registerDefaultRoles();
-		$this->default_roles = $this->acl->getRoles();
 	}
 	
 	public function test_UserWithRoleIdWithCorrectDefaultRole()
