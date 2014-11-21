@@ -8,15 +8,8 @@ class RpcServer
 	
 	function __construct($config, $authentication, $serviceLocator)
 	{
-		//get config
-		if(! array_key_exists('roach', (array) $config)) {
-			throw new \Exception('config.roach not found.');
-		}
-		$config = (array) $config['roach'];
-		if(! array_key_exists('api', (array) $config)) {
-			throw new \Exception('config.roach.api not found.');
-		}
-		$this->config = (array) $config['api'];
+		//config
+		$this->config = $config;
 		//authentication
 		$this->authentication = $authentication;
 		//service locator
@@ -28,7 +21,7 @@ class RpcServer
 		$this->request = $request;
 		//
 		$error = false;
-		$response = false;
+		$response = null;
 		//get request
 		$post = $this->request->getPOST();
 		$method = $post->get('method', '');
