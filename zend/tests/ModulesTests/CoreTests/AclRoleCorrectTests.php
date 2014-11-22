@@ -25,7 +25,7 @@ class AclRoleCorrectTests extends PHPUnit_Framework_TestCase
 		//print_r($roles);
 		$this->acl->removeRoleAll();
 		//create a role for testing
-		$uid = md5(time());
+		$uid = md5(time().rand());
 		$prole = end($roles);
 		$role_id = $model_role->insert(array(
 			'name' => 'testing.role.'.$uid,

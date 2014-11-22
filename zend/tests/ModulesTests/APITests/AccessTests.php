@@ -32,6 +32,6 @@ class AccessTests extends AbstractHttpControllerTestCase
 		$this->assertArrayHasKey('error', $response);
 		$this->assertEquals('method-not-found', $response['error']);
 		$this->assertArrayHasKey('response', $response);
-		$this->assertFalse($response['response']);
+		$this->assertNull($response['response']);
 	}
 }

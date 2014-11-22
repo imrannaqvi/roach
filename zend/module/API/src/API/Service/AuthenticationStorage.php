@@ -33,8 +33,8 @@ class AuthenticationStorage implements StorageInterface
 	public function write($contents)
 	{
 		if(gettype($contents) === 'object') {
-			$md5 = md5(microtime(true));
 			do {
+				$md5 = md5(time().rand());
 				$rd = $this->table->select(array(
 					'token' => $md5
 				));
@@ -63,7 +63,7 @@ class AuthenticationStorage implements StorageInterface
 	{
 		if($this->contents && $this->contents->id){
 			$this->table->update(array(
-				'token' => ''
+				'token' => md5(time().rand())
 			), array(
 				'id' => $this->contents->id
 			));

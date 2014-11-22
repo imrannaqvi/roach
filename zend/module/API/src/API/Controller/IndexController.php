@@ -3,7 +3,7 @@ namespace API\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use API\Service\RpcServer;
+use API\Service\RpcServer\RpcServer;
 
 class IndexController extends AbstractActionController
 {

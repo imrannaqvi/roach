@@ -1,5 +1,5 @@
 <?php
-namespace API\Service;
+namespace API\Service\RpcServer;
 
 class RpcServer
 {
@@ -20,6 +20,7 @@ class RpcServer
 	{
 		$this->request = $request;
 		//
+		$exception = null;
 		$error = false;
 		$response = null;
 		//get request
@@ -46,7 +47,16 @@ class RpcServer
 						//check if model method is specified
 						if(array_key_exists('method', $item)) {
 							if(method_exists($model, $item['method'])) {
-								$response = call_user_func_array(array($model, $item['method']), array($params));
+								try {
+									$response = call_user_func_array(array($model, $item['method']), array($params));
+								} catch( \Exception $e ) {
+									$exception = array(
+										'class' => get_class($e),
+										'message' => $e->getMessage(),
+										//'file' => $e->getFile().':'.$e->getLine(),
+										//'stack_trace' => $e->getTrace()
+									);
+								}
 							} else {
 								$error = 'model-method-not-found';
 							}
@@ -54,7 +64,7 @@ class RpcServer
 							$error = 'model-method-not-defined';
 						}
 					} catch( \Zend\ServiceManager\Exception\ServiceNotFoundException $e) {
-							$error = 'model-not-found-as-service';
+						$error = 'model-not-found-as-service';
 					}
 				} else {
 					$error = 'model-not-defined';
@@ -66,7 +76,8 @@ class RpcServer
 		return array(
 			'error' => $error,
 			'response' => $response,
-			'method' => $method
+			'method' => $method,
+			'exception' => $exception
 		);
 	}
 }

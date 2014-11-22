@@ -20,16 +20,13 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		$user_model = $this->getApplicationServiceLocator()->get('Core\Model\User');
 		$authentication = $this->getApplicationServiceLocator()->get('API\Service\AuthenticationService');
 		//1 - create user record
-		$uid = md5(time());
-		$id = false;
-		if( $user_model->insert(array(
+		$uid = md5(time().rand());
+		$id = $user_model->insert(array(
 			'username' => $uid,
 			'password' =>  md5($uid),
 			'email' => $uid.'@yahoo.com',
 			'status' => 'active'
-		))) {
-			$id = (int) $user_model->getLastInsertValue();
-		}
+		));
 		//test if user was created
 		$this->assertTrue((boolean) $id, 'User not created for authentication tests.');
 		//2 - send login request
@@ -57,10 +54,11 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		$this->assertArrayHasKey('error', $response);
 		$this->assertEquals($response['error'], 'authentication-required');
 		$this->assertArrayHasKey('response', $response);
-		$this->assertFalse($response['response']);
+		$this->assertNull($response['response']);
 		//5 - logout - with authentication
 		$this->reset();
 		$headers = new Headers();
+		//print_r($token);
 		$headers->addHeader(Authorization::fromString('Authorization: Token '.$token));
 		$this->getRequest()->setHeaders($headers);
 		$response = $this->api('logout');
@@ -73,7 +71,7 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		$this->assertArrayHasKey('error', $response);
 		$this->assertEquals($response['error'], 'authentication-required');
 		$this->assertArrayHasKey('response', $response);
-		$this->assertFalse($response['response']);
+		$this->assertNull($response['response']);
 		//delete the user created for testing
 		$this->assertTrue((boolean) $user_model->delete(array(
 			'id' => $id
@@ -86,6 +84,10 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 			'method' => $method,
 			'params' => $params
 		));
-		return (array) json_decode($this->getResponse()->getBody());
+		//print_r("\n\n".$this->getResponse()->getBody()."\n\n");
+		$this->assertEquals( 200, $this->getResponse()->getStatusCode());
+		$response = (array) json_decode($this->getResponse()->getBody());
+		$this->assertNull($response['exception']);
+		return $response;
 	}
 }
