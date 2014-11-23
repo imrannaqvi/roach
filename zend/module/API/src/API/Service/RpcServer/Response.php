@@ -8,6 +8,12 @@ class Response
 	public $response = null;
 	public $method;
 	
+	public function setError($error)
+	{
+		$this->error = $error;
+		return $this;
+	}
+	
 	public function toArray()
 	{
 		return array(
