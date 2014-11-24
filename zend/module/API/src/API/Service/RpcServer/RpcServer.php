@@ -9,7 +9,7 @@ class RpcServer
 	function __construct($config, $authentication, $serviceLocator)
 	{
 		//config
-		$this->config = $config;
+		$this->config = new Config($config);
 		//authentication
 		$this->authentication = $authentication;
 		//service locator
@@ -26,19 +26,14 @@ class RpcServer
 		$this->response->method = $method = $post->get('method', '');
 		$params = $post->get('params', array());
 		//get details current request
-		if(! array_key_exists($method, $this->config['methods'])) {
+		if(! $this->config->methodExists($method)) {
 			return $this->response->setError('method-not-found')->toArray();
 		}
 		//get method details from config and carry on
-		$item = $this->config['methods'][$method];
-		if(! array_key_exists('authentication_required', $item)) {
-			$authentication_required = true;
-		} else {
-			$authentication_required = $item['authentication_required'];
-		}
+		$item = $this->config->getMethodDetails($method);
 		$user = $this->authentication->getStorage()->read($this->request->getHeader('Authorization'));
 		//check if authentication is required but not passed
-		if($authentication_required && !$user) {
+		if($item['authentication_required'] && !$user) {
 			return $this->response->setError('authentication-required')->toArray();
 		}
 		//check if model is specified
