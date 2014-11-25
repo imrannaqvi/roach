@@ -4,10 +4,17 @@ namespace API\Service\RpcServer;
 class Config
 {
 	private $config = array();
+	public $authenticationRequired = false;
 	
 	function __construct($config)
 	{
 		$this->config = $config;
+		if(
+			array_key_exists('authentication_required', $this->config) &&
+			$this->config['authentication_required']
+		) {
+			$this->authenticationRequired = true;
+		}
 	}
 	
 	public function methodExists($method)
@@ -24,7 +31,7 @@ class Config
 	private function prepareMethodDetails($item)
 	{
 		if(! array_key_exists('authentication_required', $item)) {
-			$item['authentication_required'] = true;
+			$item['authentication_required'] = $this->authenticationRequired;
 		}
 		return $item;
 	}

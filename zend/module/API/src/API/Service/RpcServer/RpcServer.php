@@ -31,9 +31,20 @@ class RpcServer
 		}
 		//get method details from config and carry on
 		$item = $this->config->getMethodDetails($method);
-		$user = $this->authentication->getStorage()->read($this->request->getHeader('Authorization'));
+		$user = false;
+		if(
+			$this->authentication && (
+				$this->config->authenticationRequired ||
+				$item['authentication_required']
+			)
+		) {
+			$user = $this->authentication->getStorage()->read($this->request->getHeader('Authorization'));
+		}
 		//check if authentication is required but not passed
-		if($item['authentication_required'] && !$user) {
+		if(
+			$item['authentication_required'] &&
+			! $user
+		) {
 			return $this->response->setError('authentication-required')->toArray();
 		}
 		//check if model is specified

@@ -13,7 +13,8 @@ return array(
 					'model' => 'API\Model\Index',
 					'method' => 'logout'
 				)
-			)
+			),
+			'authentication_required' => true
 		)
 	),
 	//api dispatcher
