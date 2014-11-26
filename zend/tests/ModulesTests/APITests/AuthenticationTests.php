@@ -29,7 +29,17 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		));
 		//test if user was created
 		$this->assertTrue((boolean) $id, 'User not created for authentication tests.');
-		//2 - send login request
+		//2 - send login request - incorrect
+		$response = $this->api('login', array(
+			'username' => $uid,
+			//'password' => $uid
+		));
+		$this->assertArrayHasKey('error', $response);
+		$this->assertArrayHasKey('type', (array) $response['error']);
+		$this->assertArrayHasKey('param', (array) $response['error']);
+		$this->assertEquals('required', $response['error']->type);
+		$this->assertEquals('password', $response['error']->param);
+		//2 - send login request - correct
 		$response = $this->api('login', array(
 			'username' => $uid,
 			'password' => $uid

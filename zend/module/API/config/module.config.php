@@ -7,7 +7,15 @@ return array(
 				'login' => array(
 					'model' => 'API\Model\Index',
 					'method' => 'login',
-					'authentication_required' => false
+					'authentication_required' => false,
+					'parameters' => array(
+						'username' => array(
+							'required' => true
+						),
+						'password' => array(
+							'required' => true
+						)
+					)
 				),
 				'logout' => array(
 					'model' => 'API\Model\Index',
