@@ -10,7 +10,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	private $config = array();
 	private $user = null;
 	private $active_role;
-	private $active_level = 'global'; //global, organisation, project
+	private $active_level;
 	private $active_organisation = null;
 	private $active_project = null;
 	//dependencies models
@@ -18,10 +18,17 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	private $model_role;
 	private $model_rolePermission;
 	
+	//exception codes
 	const ERRCODE_ROLE_NOT_SET_FOR_USER = 10;
 	const ERRCODE_DEFUAL_ROLE_NOT_FOUND = 20;
 	const ERRCODE_ROLE_NOT_FOUND_IN_MODEL = 30;
 	const ERRCODE_USER_NOT_SET = 110;
+	
+	//permission levels
+	const PERMISSION_LEVEL_GLOBAL = 'global';
+	const PERMISSION_LEVEL_ORGANISATION = 'organisation';
+	const PERMISSION_LEVEL_PROJECT = 'project';
+	
 	
 	public function __construct(
 		$config,
@@ -73,15 +80,15 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
-		
 	function setUser($user)
 	{
-		$this->active_level = 'global';
+		$this->active_level = self::PERMISSION_LEVEL_GLOBAL;
 		$this->active_organisation = null;
 		$this->active_project = null;
 		$this->user = $user;
 		$this->loadUserRoleWithPermissions();
 		//TODO: load user projects and organisations
+		
 	}
 	
 	protected function loadUserRoleWithPermissions()
@@ -198,7 +205,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	public function setOrganisation($organisation_id)
 	{
 		//TODO: check $project_id against user assigned organisations 
-		$this->active_level = 'organisation';
+		$this->active_level = self::PERMISSION_LEVEL_ORGANISATION;
 		$this->active_organisation = $organisation_id;
 		/*
 		//TODO:
@@ -212,7 +219,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	{
 		//TODO: dependency: current role should be of 'organisation' level
 		//TODO: check $project_id against user assigned projects 
-		$this->active_level = 'project';
+		$this->active_level = self::PERMISSION_LEVEL_PROJECT;
 		$this->active_project = $project_id;
 		/*
 		//TODO:
