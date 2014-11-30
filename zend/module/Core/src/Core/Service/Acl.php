@@ -87,6 +87,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$this->active_project = null;
 		$this->user = $user;
 		$this->loadUserRoleWithPermissions();
+		$this->loadUserPermissions();
 		//TODO: load user projects and organisations
 		
 	}
@@ -200,6 +201,13 @@ class Acl extends \Zend\Permissions\Acl\Acl
 				$this->deny($role, $role_permissions[$i]['permission']);
 			}
 		}
+	}
+	
+	protected function loadUserPermissions()
+	{
+		//TODO: setting user in test must have user->id value
+		//$permissions = $this->$model_user->getUserPermissions($this->user->id);
+		//TODO: add permissions in acl
 	}
 	
 	public function setOrganisation($organisation_id)
