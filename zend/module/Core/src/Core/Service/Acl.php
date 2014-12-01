@@ -191,9 +191,7 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 		$this->addRole($role, $extends);
 		//add permissions to role
-		$role_permissions = $this->model_rolePermission->fetchAll(array(
-			'role_id' => $role_id
-		));
+		$role_permissions = $this->model_rolePermission->fetchByRoleId($role_id);
 		for($i=0; $i<count($role_permissions); $i++) {
 			if($role_permissions[$i]['access'] == 'allow') {
 				$this->allow($role, $role_permissions[$i]['permission']);
