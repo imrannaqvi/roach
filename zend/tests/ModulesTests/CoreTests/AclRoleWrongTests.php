@@ -23,6 +23,7 @@ class AclRoleWrongTests extends PHPUnit_Framework_TestCase
 	public function test_UserWithNoRole()
 	{
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => null,
 			'role_id' => null
 		));
@@ -35,6 +36,7 @@ class AclRoleWrongTests extends PHPUnit_Framework_TestCase
 	public function test_UserWithWrongDefaultRole()
 	{
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => 'John-Doe',
 			'role_id' => null
 		));
@@ -47,6 +49,7 @@ class AclRoleWrongTests extends PHPUnit_Framework_TestCase
 	public function test_UserWithWrongRoleId()
 	{
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => null,
 			'role_id' => 1234
 		));
@@ -70,6 +73,7 @@ class AclRoleWrongTests extends PHPUnit_Framework_TestCase
 		$this->assertTrue((boolean) $role_id);
 		//set user
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => null,
 			'role_id' => $role_id
 		));

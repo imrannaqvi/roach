@@ -44,6 +44,7 @@ class AclRolePermissionTests extends PHPUnit_Framework_TestCase
 		$this->assertTrue((boolean) $role_id);
 		// set user
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => null,
 			'role_id' => $role_id
 		));
@@ -74,6 +75,7 @@ class AclRolePermissionTests extends PHPUnit_Framework_TestCase
 		// clone first acl and set user
 		$acl2 = clone($this->acl);
 		$this->acl->setUser((object) array(
+			'id' => 1,
 			'default_role' => null,
 			'role_id' => $role_id2
 		));
