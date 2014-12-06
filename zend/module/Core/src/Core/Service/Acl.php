@@ -192,20 +192,25 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$this->addRole($role, $extends);
 		//add permissions to role
 		$role_permissions = $this->model_rolePermission->fetchByRoleId($role_id);
-		for($i=0; $i<count($role_permissions); $i++) {
-			if($role_permissions[$i]['access'] == 'allow') {
-				$this->allow($role, $role_permissions[$i]['permission']);
-			} else {
-				$this->deny($role, $role_permissions[$i]['permission']);
-			}
-		}
+		$this->addPermissionsToRole($role, $role_permissions);
 	}
 	
 	protected function loadUserPermissions()
 	{
-		//TODO: setting user in test must have user->id value
-		//$permissions = $this->$model_user->getUserPermissions($this->user->id);
-		//TODO: add permissions in acl
+		$permissions = $this->model_user->getUserPermissions($this->user->id);
+		//TODO: add a new user specific rolr in acl and active_role to new role 
+		$this->addPermissionsToRole($this->active_role, $permissions);
+	}
+	
+	protected function addPermissionsToRole($role, $permissions)
+	{
+		for($i=0; $i<count($permissions); $i++) {
+			if($permissions[$i]['access'] == 'allow') {
+				$this->allow($role, $permissions[$i]['permission']);
+			} else {
+				$this->deny($role, $permissions[$i]['permission']);
+			}
+		}
 	}
 	
 	public function setOrganisation($organisation_id)
