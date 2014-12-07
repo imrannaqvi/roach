@@ -7,29 +7,62 @@ use Core\Model;
 
 class Acl extends \Zend\Permissions\Acl\Acl
 {
+	/** @var array Used for storing config for acl. */
 	private $config = array();
+	
+	/** @var null|object Current logged in user. */
 	private $user = null;
+	
+	/** @var string Active acl role for current logged in user. */
 	private $active_role;
+	
+	/** @var string Active acl level. */
 	private $active_level;
+	
+	/** @var null|int Organisation id for current logged in user, set by setOrganisation method. */
 	private $active_organisation = null;
+	
+	/** @var null|int Project id for current logged in user, set by setProject method. */
 	private $active_project = null;
-	//dependencies models
+	
+	/** @var Core\Model\User */
 	private $model_user;
+	
+	/** @var Core\Model\Role */
 	private $model_role;
+	
+	/** @var Core\Model\RolePermission */
 	private $model_rolePermission;
 	
-	//exception codes
+	/** Exception type: No role was set for current user. */
 	const ERRCODE_ROLE_NOT_SET_FOR_USER = 10;
+	
+	/** Exception type: Default role not found in config.roles. */
 	const ERRCODE_DEFUAL_ROLE_NOT_FOUND = 20;
+	
+	/** Exception type: Role not found in Role Model. */
 	const ERRCODE_ROLE_NOT_FOUND_IN_MODEL = 30;
+	
+	/** Exception type: User not set for acl. */
 	const ERRCODE_USER_NOT_SET = 110;
 	
-	//permission levels
+	/** Pemission Level: global */
 	const PERMISSION_LEVEL_GLOBAL = 'global';
+	
+	/** Pemission Level: organisation */
 	const PERMISSION_LEVEL_ORGANISATION = 'organisation';
+	
+	/** Pemission Level: project */
 	const PERMISSION_LEVEL_PROJECT = 'project';
 	
-	
+	/**
+	 * Constructor
+	 *
+	 * @param array $config
+	 * @param Core\Model\User $model_user
+	 * @param Core\Model\Role $model_role
+	 * @param Core\Model\RolePermission $model_rolePermission
+	 */
 	public function __construct(
 		$config,
 		Model\User $model_user,
@@ -46,6 +79,9 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$this->registerResources();
 	}
 	
+	/**
+	 * Initialize required changes in loaded config.
+	 */
 	protected function initConfig()
 	{
 		//add resources and permissions as child resources
@@ -58,6 +94,9 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
+	/**
+	 * Register acl resources in current acl.
+	 */
 	protected function registerResources()
 	{
 		foreach($this->config['resources'] as $resource => $permissions) {
@@ -70,6 +109,9 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
+	/**
+	 * Register all default roles (roles defined in config.roles) in current acl. Only used in tests.
+	 */
 	public function registerDefaultRoles()
 	{
 		//default roles
@@ -80,6 +122,11 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
+	/**
+	 * Set user for current acl.
+	 *
+	 * @param object $user
+	 */
 	function setUser($user)
 	{
 		$this->active_level = self::PERMISSION_LEVEL_GLOBAL;
@@ -92,6 +139,11 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		
 	}
 	
+	/**
+	 * Load Role of current user to current acl. Role might be role from Role Model or from acl config.
+	 *
+	 * @throws Core\Service\AclException
+	 */
 	protected function loadUserRoleWithPermissions()
 	{
 		//if role from model
@@ -107,27 +159,35 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		throw new AclException('role not defined for user.', self::ERRCODE_ROLE_NOT_SET_FOR_USER);
 	}
 	
-	protected function addDefaultRoleFromConfig($key, $details = null)
+	/**
+	 * Add role in current acl defined in config.roles associative array.
+	 *
+	 * @param string $roleName A key from config.roles.
+	 * @param null|array details for config.roles as array.
+	 *
+	 * @throws Core\Service\AclException
+	 */
+	protected function addDefaultRoleFromConfig($roleName, $details = null)
 	{
 		//get details if not passed
 		if(
 			!$details && 
 			array_key_exists('roles', (array) $this->config) &&
-			array_key_exists($key, (array) $this->config['roles'])
+			array_key_exists($roleName, (array) $this->config['roles'])
 		) {
-			$details = (array) $this->config['roles'][$key];
+			$details = (array) $this->config['roles'][$roleName];
 		}
 		if(! $details) {
-			throw new AclException('"'.$key.'" Role not found in config.', self::ERRCODE_DEFUAL_ROLE_NOT_FOUND);
+			throw new AclException('"'.$roleName.'" Role not found in config.', self::ERRCODE_DEFUAL_ROLE_NOT_FOUND);
 		}
 		//return if role already exists
-		if($this->hasRole($key)) {
+		if($this->hasRole($roleName)) {
 			return;
 		}
 		//check if extends form other roles
 		$extends = array_key_exists('extends', (array) $details) ? $details['extends'] : null;
 		//create and add role in acl
-		$role = new Role($key);
+		$role = new Role($roleName);
 		if($extends && !$this->hasRole($extends)) {
 			$this->addDefaultRoleFromConfig($extends);
 		}
@@ -166,6 +226,13 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
+	/**
+	 * Add role in current acl defined in Roles Model.
+	 *
+	 * @param int $role_id Role id of Role.
+	 *
+	 * @throws Core\Service\AclException
+	 */
 	protected function addRoleFromModel($role_id)
 	{
 		$role = $this->model_role->fetchOneById($role_id);
@@ -195,6 +262,9 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$this->addPermissionsToRole($role, $role_permissions);
 	}
 	
+	/**
+	 * Add user specific permissions for logged in user in current acl.
+	 */
 	protected function loadUserPermissions()
 	{
 		$permissions = $this->model_user->getUserPermissions($this->user->id);
@@ -202,6 +272,12 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		$this->addPermissionsToRole($this->active_role, $permissions);
 	}
 	
+	/**
+	 * Helper method to add allow/deny specific permissions for a given user in current acl.
+	 *
+	 * @param string $role A valid role from acl.
+	 * @param string $permissions A list of permissions and whether each one is allow/deny.
+	 */
 	protected function addPermissionsToRole($role, $permissions)
 	{
 		for($i=0; $i<count($permissions); $i++) {
@@ -213,6 +289,13 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		}
 	}
 	
+	/**
+	 * Set current acl level to specific Organisation.
+	 * There may be many organisations current user is associated to. 
+	 * This method uses different acl roles for per user per organisation for easy reloading and conflict resolution.  
+	 *
+	 * @param string $organisation_id Organisation id from Organisation Model.
+	 */
 	public function setOrganisation($organisation_id)
 	{
 		//TODO: check $project_id against user assigned organisations 
@@ -226,6 +309,13 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		*/
 	}
 	
+	/**
+	 * Set current acl level to specific Project.
+	 * There may be many projects current user is associated to. 
+	 * This method uses different acl roles for per user per organisation per project for easy reloading and conflict resolution.  
+	 *
+	 * @param string $project_id Project id from Project Model.
+	 */
 	public function setProject($project_id)
 	{
 		//TODO: dependency: current role should be of 'organisation' level
@@ -240,6 +330,14 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		*/
 	}
 	
+	/**
+	 * To check whether a specific resource/permission is allowed to current logged in user.
+	 *
+	 * @param string|Zend\Permissions\Acl\Resource\ResourceInterface resource or permission.
+	 *
+	 * @throws Core\Service\AclException
+	 * @return boolean
+	 */
 	public function isAllowedToActiveRole($resource)
 	{
 		if(! $this->active_role) {
@@ -248,6 +346,11 @@ class Acl extends \Zend\Permissions\Acl\Acl
 		return $this->isAllowed($this->active_role, $resource);
 	}
 	
+	/**
+	 * Get config.
+	 *
+	 * @return array
+	 */
 	public function getConfig()
 	{
 		return $this->config;
