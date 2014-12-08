@@ -3,11 +3,24 @@ namespace API\Service\RpcServer;
 
 class RpcServer
 {
+	/** @var null|API\Service\RpcServer\Config Used for storing config object. */
 	protected $config = null;
+	
+	/** @var null|Zend\ServiceManager\ServiceLocatorInterface Used to save reference to service locator for loading models as invokable. */
 	protected $serviceLocator = null;
 	
-	function __construct($config, $authentication, $serviceLocator)
-	{
+	/**
+	 * Constructor
+	 *
+	 * @param array $config
+	 * @param Zend\Authentication\AuthenticationService $authentication
+	 * @param Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+	 */
+	function __construct(
+		$config,
+		\Zend\Authentication\AuthenticationService $authentication, 
+		\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+	) {
 		//config
 		$this->config = new Config($config);
 		//authentication
@@ -18,7 +31,14 @@ class RpcServer
 		$this->response = new Response();
 	}
 	
-	function handle($request)
+	/**
+	 * To handle incoming request.
+	 *
+	 * @param Zend\Http\PhpEnvironment\Request
+	 *
+	 * @return array
+	 */
+	function handle(\Zend\Http\PhpEnvironment\Request $request)
 	{
 		$this->request = $request;
 		//get request
@@ -94,6 +114,14 @@ class RpcServer
 		return $this->response->toArray();
 	}
 	
+	/**
+	 * Parse data and return after validations and filters.
+	 *
+	 * @param array $cParams Parameters from api config.
+	 * @param array $data Data from request to be checked for validations and fitlers.
+	 *
+	 * @return array
+	 */
 	private function parseParameters($cParams, $data)
 	{
 		foreach($cParams as $key => $value) {
