@@ -18,7 +18,8 @@ class AbstractFactory implements AbstractFactoryInterface
 	{
 		return new $requestedName(
 			$serviceLocator->get('Zend\Db\Adapter\Adapter'),
-			$serviceLocator->get('Core\Service\LazyLoader\Acl')
+			$serviceLocator->get('Core\Service\LazyLoader\Acl'),
+			$serviceLocator
 		);
 	}
 }

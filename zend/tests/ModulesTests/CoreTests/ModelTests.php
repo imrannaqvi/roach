@@ -80,4 +80,10 @@ class ModelTests extends PHPUnit_Framework_TestCase
 			$this->assertTrue(!! $instance->select(array('id' => 1)));
 		}
 	}
+	
+	public function test_UserModel()
+	{
+		$model_user = $this->serviceManager->get('Core\Model\User');
+		$this->assertInstanceOf('Core\Model\UserPermission', $model_user->model_userPermission);
+	}
 }
