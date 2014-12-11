@@ -8,13 +8,31 @@ use \Zend\ServiceManager\ServiceLocatorInterface;
 
 class Model extends TableGateway
 {
+	/** @var string Table name. */
 	public $table;
+	
+	/** @var array Associative array of property as key and value as another table. */
 	protected $tables = array();
+	
+	/** @var array Primary key column name. */
 	protected $idColumn = 'id';
+	
+	/** @var Core\Service\LazyLoader\Acl Lazy Loader class for Used for Core\Service\Acl. */
 	protected $aclLazyLoader;
+	
+	/** @var Core\Service\Acl */
 	protected $acl;
+	
+	/** @var Zend\ServiceManager\ServiceLocatorInterface For loading other tables. */
 	protected $serviceLocator;
 	
+	/**
+	 * Constructor
+	 *
+	 * @param Zend\Db\Adapter\Adapter $adapter
+	 * @param Core\Service\LazyLoader\Acl $aclLazyLoader
+	 * @param Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+	 */
 	public function __construct(
 		Adapter $adapter,
 		LazyLoader\Acl $aclLazyLoader,
@@ -25,6 +43,10 @@ class Model extends TableGateway
 		$this->serviceLocator = $serviceLocator;
 	}
 	
+	/**
+	 * @param array $data.
+	 * @return integer|null
+	 */
 	public function insert($data)
 	{
 		if(! $this->acl) {
@@ -36,6 +58,10 @@ class Model extends TableGateway
 		return null;
 	}
 	
+	/**
+	 * @param array $where.
+	 * @return array|null
+	 */
 	public function fetchOne($where = null)
 	{
 		$select = $this->sql->select();
@@ -47,12 +73,20 @@ class Model extends TableGateway
 		return null;
 	}
 	
+	/**
+	 * @param array $where.
+	 * @return array
+	 */
 	public function fetchAll($where = null)
 	{
 		$rs = $this->select($where);
 		return $rs->toArray();
 	}
 	
+	/**
+	 * @param integer $id.
+	 * @return array|null
+	 */
 	public function fetchOneById($id)
 	{
 		return $this->fetchOne(array(
@@ -60,6 +94,10 @@ class Model extends TableGateway
 		));
 	}
 	
+	/**
+	 * @param int $id.
+	 * @return int
+	 */
 	public function deleteById($id)
 	{
 		return $this->delete(array(
