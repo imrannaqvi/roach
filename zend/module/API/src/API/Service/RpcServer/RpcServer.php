@@ -9,6 +9,9 @@ class RpcServer
 	/** @var null|Zend\ServiceManager\ServiceLocatorInterface Used to save reference to service locator for loading models as invokable. */
 	protected $serviceLocator = null;
 	
+	/** @var null|API\Service\RpcServer\Response */
+	protected $response;
+	
 	/**
 	 * Constructor
 	 *
