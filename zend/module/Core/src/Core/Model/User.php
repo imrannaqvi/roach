@@ -10,7 +10,8 @@ class User extends Model
 	
 	public function getUserPermissions($user_id)
 	{
-		//TODO: add implementation
-		return array();
+		return $this->model_userPermission->fetchAll(array(
+			'user_id' => $user_id
+		));
 	}
 }
