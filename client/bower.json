@@ -1,0 +1,10 @@
+{
+	"name": "roach",
+	"dependencies": {
+		"jquery": "*",
+		"angular": "*",
+		"angular-route": "*",
+		"angular-animate": "*",
+		"bootstrap": "*"
+	}
+}
