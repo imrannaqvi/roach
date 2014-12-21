@@ -45,7 +45,14 @@ class RpcServer
 	{
 		$this->request = $request;
 		//get request
-		$post = $this->request->getPOST();
+		if(
+			$this->request->getHeaders('Accept') &&
+			$this->request->getHeaders('Accept')->getFieldValue() === 'application/json, text/plain, */*'
+		) {
+			$post = new \Zend\Stdlib\Parameters((array) json_decode(file_get_contents('php://input')));
+		} else {
+			$post = $this->request->getPOST();
+		}
 		$this->response->method = $method = $post->get('method', '');
 		$params = $post->get('params', array());
 		//get details current request
