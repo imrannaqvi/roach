@@ -110,7 +110,7 @@ class RpcServer
 					$model,
 					$item['method']
 				), array(
-					$params
+					new \Zend\Stdlib\Parameters((array) $params)
 				));
 			} catch( \Exception $e ) {
 				$this->response->exception = array(
