@@ -19,6 +19,10 @@
 							Login to roach
 						</h4>
 						<div class="space-16"></div>
+						<div class="alert alert-danger animate-hide" role="alert" ng-show="login_error">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span> Invalid login details.
+						</div>
 						<form name="loginForm" class="form-horizontal" role="form">
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="email"> Username </label>
@@ -43,7 +47,7 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right"> </label>
 									<div class="col-sm-7">
-										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary" ng-click="login(user)" data-ng-disabled="loginForm.$invalid">
+										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary" ng-click="login()" data-ng-disabled="loginForm.$invalid">
 											<i class="ace-icon fa fa-key"></i> Login
 										</button>
 									</div>
