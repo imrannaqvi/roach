@@ -16,10 +16,18 @@ class Index extends Model
 			$resultRow = $this->authentication->getStorage()->write($resultRow);
 			if(isset($resultRow->token)) {
 				$token = $resultRow->token;
+				//unset specific keys for response
+				$resultRow = (array) $resultRow;
+				foreach($resultRow as $key => $value) {
+					if(in_array($key, array('password', 'token'))) {
+						unset($resultRow[$key]);
+					}
+				}
 			}
 		}
 		return array(
-			'token' => $token
+			'$token' => $token,
+			'$user' => $resultRow
 		);
 	}
 	

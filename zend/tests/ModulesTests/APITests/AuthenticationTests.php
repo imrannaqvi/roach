@@ -49,8 +49,8 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		$this->assertFalse($response['error'], '"error" key should be false.');
 		$this->assertArrayHasKey('response', $response, 'API response do not returned "response" key.');
 		$token = (array) $response['response'];
-		$this->assertArrayHasKey('token', $token, '"token" not returned as a key.');
-		$token = $token['token'];
+		$this->assertArrayHasKey('$token', $token, '"token" not returned as a key.');
+		$token = $token['$token'];
 		$this->assertEquals( 32, strlen($token), 'Not a proper MD5 token.');
 		//3 - get storage and test it with login request data
 		$storage = $authentication->getStorage()->read();
