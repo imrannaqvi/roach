@@ -15,6 +15,8 @@ class Index extends Model
 			$resultRow = $this->authentication->getAdapter()->getResultRowObject();
 			$resultRow = $this->authentication->getStorage()->write($resultRow);
 			if(isset($resultRow->token)) {
+				//set acl user
+				$this->acl->setUser($resultRow);
 				$token = $resultRow->token;
 				//unset specific keys for response
 				$resultRow = (array) $resultRow;
@@ -27,7 +29,8 @@ class Index extends Model
 		}
 		return array(
 			'$token' => $token,
-			'$user' => $resultRow
+			'$user' => $resultRow,
+			'$acl' => $this->acl->serialize()
 		);
 	}
 	
