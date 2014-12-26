@@ -25,7 +25,8 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 			'username' => $uid,
 			'password' =>  md5($uid),
 			'email' => $uid.'@yahoo.com',
-			'status' => 'active'
+			'status' => 'active',
+			'default_role' => 'root'
 		));
 		//test if user was created
 		$this->assertTrue((boolean) $id, 'User not created for authentication tests.');
