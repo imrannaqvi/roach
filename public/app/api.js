@@ -1,8 +1,9 @@
-app.factory("API", ['$http', '$q', function ($http, $q) {
+app.factory('API', ['$http', '$q', function ($http, $q) {
 	var serviceBaseUrl = 'api/';
 	return {
 		token: false,
 		user: false,
+		spinner: false,
 		login: function(user) {
 			var deferred = $q.defer();
 			var that = this;
@@ -20,6 +21,9 @@ app.factory("API", ['$http', '$q', function ($http, $q) {
 		},
 		request: function(method, params) {
 			var deferred = $q.defer();
+			var that = this;
+			this.showSpinner();
+			//send request
 			$http({
 				method: 'POST',
 				url: serviceBaseUrl,
@@ -34,11 +38,27 @@ app.factory("API", ['$http', '$q', function ($http, $q) {
 				} else {
 					deferred.reject(data);
 				}
+				that.hideSpinner();
 			}).error(function(data, status, headers, config) {
 				console.error('API[' + method + ']', data, status, headers, config);
 				deferred.reject(data);
+				that.hideSpinner();
 			});
 			return deferred.promise;
+		},
+		showSpinner: function() {
+			//TODO: <div class="overlay" style="position: absolute; background: rgba(0,0,0,0.25); z-index: 10000;"></div>
+			var target = document.body;
+			if(! this.spinner) {
+				this.spinner = new Spinner({color:'#ccc', lines: 8}).spin(target);
+			} else {
+				this.spinner.spin(target);
+			}
+		},
+		hideSpinner: function() {
+			if( this.spinner) {
+				this.spinner.stop();
+			}
 		}
 	};
 }]);

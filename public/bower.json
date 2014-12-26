@@ -5,6 +5,7 @@
 		"angular": "*",
 		"angular-route": "*",
 		"angular-animate": "*",
-		"bootstrap": "*"
+		"bootstrap": "*",
+		"spin.js": "*"
 	}
 }
