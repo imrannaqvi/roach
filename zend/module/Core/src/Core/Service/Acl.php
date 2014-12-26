@@ -355,4 +355,28 @@ class Acl extends \Zend\Permissions\Acl\Acl
 	{
 		return $this->config;
 	}
+	
+	/**
+	 * Serialize for client-side.
+	 *
+	 * @return array
+	 */
+	public function serialize()
+	{
+		//get all resources as key and permission allow/deny as value
+		$resources = $this->getResources();
+		$rp = array();
+		for($i=0; $i<count($resources); $i++) {
+			$rp[$resources[$i]] = $this->isAllowedToActiveRole($resources[$i]);
+		}
+		//return as array
+		return array(
+			'resources' => $rp,
+			'active_level' => $this->active_level,
+			'active_organisation' => $this->active_organisation,
+			'active_project' => $this->active_project,
+			'active_role' => $this->active_role
+			
+		);
+	}
 }
