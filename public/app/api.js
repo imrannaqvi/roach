@@ -1,4 +1,4 @@
-app.factory('API', ['$http', '$q', function ($http, $q) {
+app.factory('API', [ '$rootScope', '$http', '$q', function ($rootScope, $http, $q) {
 	var serviceBaseUrl = 'api/';
 	return {
 		token: false,
@@ -12,6 +12,7 @@ app.factory('API', ['$http', '$q', function ($http, $q) {
 				if(data.$token && data.$user) {
 					that.token = data.$token;
 					that.user = data.$user;
+					$rootScope.user = data.$user;
 					deferred.resolve(data);
 				} else {
 					deferred.reject(data);
