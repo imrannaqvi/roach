@@ -23,4 +23,10 @@ app.config(['$routeProvider', function ($routeProvider) {
 	}).otherwise({
 		redirectTo: '/login'
 	});
-}]);
+}])
+.run(function ($rootScope, $location, API) {
+	$rootScope.logout = function(){
+		console.log('$rootScope.logout():');
+	};
+	//TODO: request session by using token from localStorage on other than login url
+});
