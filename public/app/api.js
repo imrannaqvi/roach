@@ -1,4 +1,5 @@
-app.factory('API', [ '$rootScope', '$http', '$q', function ($rootScope, $http, $q) {
+app.factory('API', [ '$rootScope', '$http', '$q', 'localStorageService', 
+function ($rootScope, $http, $q, localStorageService) {
 	var serviceBaseUrl = 'api/';
 	return {
 		token: false,
@@ -10,9 +11,13 @@ app.factory('API', [ '$rootScope', '$http', '$q', function ($rootScope, $http, $
 			var promise = this.request('login', user).then(function(data) {
 				console.log('this is from API.login method:', data.$token, data.$user);
 				if(data.$token && data.$user) {
+					//save references to logged in user
 					that.token = data.$token;
 					that.user = data.$user;
 					$rootScope.user = data.$user;
+					//store token to localstorage
+					localStorageService.set('token', that.token);
+					//callback
 					deferred.resolve(data);
 				} else {
 					deferred.reject(data);

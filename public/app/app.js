@@ -1,5 +1,10 @@
-var app = angular.module('roach', ['ngRoute', 'ngAnimate']);
-app.config(['$routeProvider', function ($routeProvider) {
+var app = angular.module('roach', ['ngRoute', 'ngAnimate', 'LocalStorageModule']);
+app.config(['$routeProvider', 'localStorageServiceProvider', function ($routeProvider, localStorageServiceProvider) {
+	//localStorageServiceProvider settings
+	localStorageServiceProvider
+	.setPrefix('roach')
+	.setStorageType('localStorage');
+	//router
 	$routeProvider.when('/login', {
 		title: 'Login',
 		templateUrl: 'partials/login.html',

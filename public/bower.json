@@ -6,6 +6,7 @@
 		"angular-route": "*",
 		"angular-animate": "*",
 		"bootstrap": "*",
-		"spin.js": "*"
+		"spin.js": "*",
+		"angular-local-storage": "*"
 	}
 }
