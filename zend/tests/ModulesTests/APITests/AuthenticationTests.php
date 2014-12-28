@@ -59,6 +59,18 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 		$this->assertEquals($uid, (string) $storage->username);
 		$this->assertEquals($token, (string) $storage->token);
 		$this->assertEquals('active', (string) $storage->status);
+		//32 - test session mehod
+		$headers = new Headers();
+		$headers->addHeader(Authorization::fromString('Authorization: Token '.$token));
+		$this->getRequest()->setHeaders($headers);
+		$response = $this->api('session');
+		$this->assertArrayHasKey('error', $response);
+		$this->assertFalse($response['error']);
+		$this->assertArrayHasKey('response', $response);
+		$this->assertArrayHasKey('$user', (array) $response['response']);
+		$response = (array) $response['response'];
+		$this->assertEquals($id, $response['$user']->id);
+		$this->assertEquals($uid, (string) $response['$user']->username);
 		//4 - logout - without authentication
 		$this->reset();
 		$response = $this->api('logout');

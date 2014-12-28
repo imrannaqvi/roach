@@ -34,6 +34,23 @@ class Index extends Model
 		);
 	}
 	
+	public function session($params)
+	{
+		$resultRow = $this->authentication->getStorage()->read();
+		//set acl user
+		$this->acl->setUser($resultRow);
+		$resultRow = (array) $resultRow;
+		foreach($resultRow as $key => $value) {
+			if(in_array($key, array('password', 'token'))) {
+				unset($resultRow[$key]);
+			}
+		}
+		return array(
+			'$user' => $resultRow,
+			'$acl' => $this->acl->serialize()
+		);
+	}
+	
 	public function logout()
 	{
 		$this->authentication->getStorage()->clear();

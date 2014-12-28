@@ -26,6 +26,10 @@ return array(
 				'logout' => array(
 					'model' => 'API\Model\Index',
 					'method' => 'logout'
+				),
+				'session'  => array(
+					'model' => 'API\Model\Index',
+					'method' => 'session'
 				)
 			),
 			'authentication_required' => true
