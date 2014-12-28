@@ -34,4 +34,19 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 		console.log('$rootScope.logout():');
 	};
 	//TODO: request session by using token from localStorage on other than login url
+	$rootScope.$on("$routeChangeStart", function (event, next, current) {
+		//send session request
+		if(
+			! $rootScope.user && 
+			['/login', '/signup'].indexOf(next.$$route.originalPath) === -1
+		) {
+			console.log('request session::', $rootScope.user);
+			API.getSession().then(function(data){
+				console.log('got session::', $rootScope.user, data);
+			}, function(reason){
+				console.log('error reason::', reason);
+				$location.path("/login");
+			});
+		}
+	});
 });

@@ -3,20 +3,22 @@ function ($rootScope, $http, $q, localStorageService) {
 	var serviceBaseUrl = 'api/';
 	return {
 		token: false,
+		token_key: 'token',
 		user: false,
 		spinner: false,
 		login: function(user) {
 			var deferred = $q.defer();
 			var that = this;
-			var promise = this.request('login', user).then(function(data) {
+			var promise = this.request('login', user, true).then(function(data) {
 				console.log('this is from API.login method:', data.$token, data.$user);
-				if(data.$token && data.$user) {
+				if(data.$token && data.$user && data.$acl) {
 					//save references to logged in user
 					that.token = data.$token;
 					that.user = data.$user;
 					$rootScope.user = data.$user;
+					$rootScope.acl = data.$acl;
 					//store token to localstorage
-					localStorageService.set('token', that.token);
+					localStorageService.set(that.token_key, that.token);
 					//callback
 					deferred.resolve(data);
 				} else {
@@ -25,10 +27,36 @@ function ($rootScope, $http, $q, localStorageService) {
 			});
 			return deferred.promise;
 		},
-		request: function(method, params) {
+		getSession: function() {
+			var that = this;
+			var token = localStorageService.get(this.token_key);
+			var deferred = $q.defer();
+			if(! token) {
+				deferred.reject('token-not-found');
+			} else {
+				this.token = token;
+				this.request('session').then(function(data) {
+					console.log('this is from API.getSession method:', data);
+					if(data.$user && data.$acl) {
+						that.user = data.$user;
+						$rootScope.user = data.$user;
+						$rootScope.acl = data.$acl;
+						//callback
+						deferred.resolve(data);
+					}
+				});
+			}
+			return deferred.promise;
+		},
+		request: function(method, params, skip_token) {
 			var deferred = $q.defer();
 			var that = this;
 			this.showSpinner();
+			//headers
+			var headers = {};
+			if(! skip_token) {
+				headers['Authorization'] = 'Token ' + this.token;
+			}
 			//send request
 			$http({
 				method: 'POST',
@@ -36,7 +64,8 @@ function ($rootScope, $http, $q, localStorageService) {
 				data: {
 					method: method,
 					params: params
-				}
+				},
+				headers: headers
 			}).success(function(data) {
 				console.info('API[' + method + ']', data);
 				if(! data.error ) {
