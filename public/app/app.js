@@ -8,25 +8,18 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 	$routeProvider.when('/login', {
 		title: 'Login',
 		templateUrl: 'partials/login.html',
-		controller: 'authCtrl'
-	}).when('/logout', {
-		title: 'Logout',
-		templateUrl: 'partials/login.html',
-		controller: 'logoutCtrl'
+		controller: 'AuthenticationController'
 	}).when('/signup', {
 		title: 'Signup',
 		templateUrl: 'partials/signup.html',
-		controller: 'authCtrl'
-	}).when('/dashboard', {
+		controller: 'AuthenticationController'
+	}).when('/?', {
 		title: 'Dashboard',
 		templateUrl: 'partials/dashboard.html',
-		controller: 'authCtrl'
-	}).when('/', {
-		title: 'Login',
-		templateUrl: 'partials/login.html',
-		controller: 'authCtrl'
+		controller: 'AuthenticationController'
 	}).otherwise({
-		redirectTo: '/login'
+		title: 'Page Not Found',
+		templateUrl: 'partials/404.html'
 	});
 }])
 .run(function ($rootScope, $location, API) {
@@ -38,7 +31,8 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 		//send session request
 		if(
 			! $rootScope.user && 
-			['/login', '/signup'].indexOf(next.$$route.originalPath) === -1
+			( ! next.$$route || 
+			['/login', '/signup'].indexOf(next.$$route.originalPath) === -1 )
 		) {
 			console.log('request session::', $rootScope.user);
 			API.getSession().then(function(data){
