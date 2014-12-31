@@ -54,5 +54,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 				$location.path("/login");
 			});
 		}
+		//append route dependent title to default title
+		$rootScope.title = 'roach';
+		if(next.$$route.title) {
+			$rootScope.title += ' : '+ next.$$route.title;
+		}
 	});
 });
