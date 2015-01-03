@@ -1,3 +1,5 @@
+'use strict';
+
 app.factory('API', [ '$rootScope', '$http', '$q', 'localStorageService', 
 function ($rootScope, $http, $q, localStorageService) {
 	var serviceBaseUrl = 'api/';

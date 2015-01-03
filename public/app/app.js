@@ -1,3 +1,5 @@
+'use strict';
+
 var app = angular.module('roach', ['ngRoute', 'ngAnimate', 'LocalStorageModule']);
 app.config(['$routeProvider', 'localStorageServiceProvider', function ($routeProvider, localStorageServiceProvider) {
 	//localStorageServiceProvider settings

@@ -1,3 +1,5 @@
+'use strict';
+
 app.controller('AuthenticationController', function ($scope, $rootScope, $routeParams, $location, $http, API) {
 	//initially set those objects to null to avoid undefined error
 	$scope.login_error = false;
