@@ -14,14 +14,6 @@ function ($rootScope, $http, $q, localStorageService) {
 			var promise = this.request('login', user, true).then(function(data) {
 				console.log('this is from API.login method:', data.$token, data.$user);
 				if(data.$token && data.$user && data.$acl) {
-					//save references to logged in user
-					that.token = data.$token;
-					that.user = data.$user;
-					$rootScope.user = data.$user;
-					$rootScope.acl = data.$acl;
-					//store token to localstorage
-					localStorageService.set(that.token_key, that.token);
-					//callback
 					deferred.resolve(data);
 				} else {
 					deferred.reject(data);
@@ -40,10 +32,6 @@ function ($rootScope, $http, $q, localStorageService) {
 				this.request('session').then(function(data) {
 					console.log('this is from API.getSession method:', data);
 					if(data.$user && data.$acl) {
-						that.user = data.$user;
-						$rootScope.user = data.$user;
-						$rootScope.acl = data.$acl;
-						//callback
 						deferred.resolve(data);
 					}
 				});
@@ -71,6 +59,7 @@ function ($rootScope, $http, $q, localStorageService) {
 			}).success(function(data) {
 				console.info('API[' + method + ']', data);
 				if(! data.error ) {
+					that.internalLogic(data.response);
 					deferred.resolve(data.response);
 				} else {
 					deferred.reject(data);
@@ -82,6 +71,22 @@ function ($rootScope, $http, $q, localStorageService) {
 				that.hideSpinner();
 			});
 			return deferred.promise;
+		},
+		internalLogic: function(data) {
+			for(var x in data) {
+				switch(x) {
+					case '$user':
+						this.user = $rootScope.user = data[x];
+					break;
+					case '$acl':
+						$rootScope.acl = data[x];
+					break;
+					case '$token':
+						this.token = data[x];
+						localStorageService.set(this.token_key, this.token);
+					break;
+				}
+			}
 		},
 		showSpinner: function() {
 			//TODO: <div class="overlay" style="position: absolute; background: rgba(0,0,0,0.25); z-index: 10000;"></div>
