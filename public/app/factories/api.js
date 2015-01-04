@@ -1,7 +1,7 @@
 'use strict';
 
-app.factory('API', [ '$rootScope', '$http', '$q', 'localStorageService', 
-function ($rootScope, $http, $q, localStorageService) {
+app.factory('API', [ '$rootScope', '$http', '$q', 'ACL','localStorageService', 
+function ($rootScope, $http, $q, ACL, localStorageService) {
 	var serviceBaseUrl = 'api/';
 	return {
 		token: false,
@@ -79,7 +79,7 @@ function ($rootScope, $http, $q, localStorageService) {
 						this.user = $rootScope.user = data[x];
 					break;
 					case '$acl':
-						$rootScope.acl = data[x];
+						ACL.set(data[x]);
 					break;
 					case '$token':
 						this.token = data[x];

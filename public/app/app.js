@@ -26,7 +26,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 		templateUrl: 'partials/404.html'
 	});
 }])
-.run(function ($rootScope, $location, API, localStorageService) {
+.run(function ($rootScope, $location, API, ACL, localStorageService) {
 	$rootScope.logout = function(){
 		console.log('$rootScope.logout():');
 	};
@@ -36,7 +36,6 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 		//next.$$route.originalPath
 		if(next.$$route.originalPath === '/logout') {
 			$rootScope.user = false;
-			$rootScope.acl = false;
 			API.token = false;
 			API.user = false;
 			localStorageService.remove(API.token_key);
