@@ -22,7 +22,7 @@
 				</div>
 				<ul class="nav navbar-nav navbar-right">
 					<li ng-show="user"><a>{{user.username}}</a></li>
-					<li ng-show="user"><a href="#/logout">Logout</a></li>
+					<li ng-show="user"><a href="#{{'logout'|route}}">Logout</a></li>
 				</ul>
 			</div>
 		</div>
@@ -38,6 +38,7 @@
 <script src="/bower_components/angular-route/angular-route.min.js"></script>
 <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
 <script src="/bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
+<script src="/bower_components/angular-named-routes/build/lib/named-routes.js"></script>
 <script src="/bower_components/spin.js/spin.js"></script>
 <script src="/app/app.js"></script>
 <script src="/app/factories/api.js"></script>

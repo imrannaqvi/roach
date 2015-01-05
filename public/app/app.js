@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('roach', ['ngRoute', 'ngAnimate', 'LocalStorageModule']);
+var app = angular.module('roach', ['ngRoute', 'ngAnimate', 'LocalStorageModule', 'zj.namedRoutes']);
 app.config(['$routeProvider', 'localStorageServiceProvider', function ($routeProvider, localStorageServiceProvider) {
 	//localStorageServiceProvider settings
 	localStorageServiceProvider
@@ -8,16 +8,20 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 	.setStorageType('localStorage');
 	//router
 	$routeProvider.when('/login', {
+		name: 'login',
 		title: 'Login',
 		templateUrl: 'partials/login.html',
 		controller: 'AuthenticationController'
 	}).when('/logout', {
+		name: 'logout',
 		title: 'Logout'
 	}).when('/signup', {
+		name: 'signup',
 		title: 'Signup',
 		templateUrl: 'partials/signup.html',
 		controller: 'AuthenticationController'
 	}).when('/?', {
+		name: 'dashboard',
 		title: 'Dashboard',
 		templateUrl: 'partials/dashboard.html',
 		controller: 'AuthenticationController'
@@ -26,7 +30,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 		templateUrl: 'partials/404.html'
 	});
 }])
-.run(function ($rootScope, $location, API, ACL, localStorageService) {
+.run(function ($rootScope, $location, API, ACL, localStorageService, $NamedRouteService) {
 	$rootScope.logout = function(){
 		console.log('$rootScope.logout():');
 	};
@@ -34,25 +38,25 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
 	$rootScope.$on("$routeChangeStart", function (event, next, current) {
 		console.log('$routeChangeStart:', event, next, current);
 		//next.$$route.originalPath
-		if(next.$$route.originalPath === '/logout') {
+		if(next.$$route.originalPath === $NamedRouteService.reverse('logout')) {
 			$rootScope.user = false;
 			API.token = false;
 			API.user = false;
 			localStorageService.remove(API.token_key);
-			$location.path("/login");
+			$location.path($NamedRouteService.reverse('login'));
 			return;
 		}
 		//send session request
 		if(
 			! $rootScope.user && 
 			( ! next.$$route || 
-			['/login', '/signup'].indexOf(next.$$route.originalPath) === -1 )
+			[$NamedRouteService.reverse('login'), $NamedRouteService.reverse('signup')].indexOf(next.$$route.originalPath) === -1 )
 		) {
 			API.getSession().then(function(data){
 				console.log('got session::', $rootScope.user, data);
 			}, function(reason){
 				console.log('error reason::', reason);
-				$location.path("/login");
+				$location.path($NamedRouteService.reverse('login'));
 			});
 		}
 		//append route dependent title to default title
