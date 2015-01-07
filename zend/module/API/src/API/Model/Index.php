@@ -51,6 +51,11 @@ class Index extends Model
 		);
 	}
 	
+	public function signup($params)
+	{
+		return array();
+	}
+	
 	public function logout()
 	{
 		$this->authentication->getStorage()->clear();

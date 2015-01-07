@@ -23,6 +23,36 @@ return array(
 						)
 					)
 				),
+				'signup' => array(
+					'model' => 'API\Model\Index',
+					'method' => 'signup',
+					'parameters' => array(
+						'username' => array(
+							'required' => true,
+							'validations' => array(
+								'stringLength' => array(
+									'min' => 4,
+									'max' => 24
+								)
+							)
+						),
+						'email' => array(
+							'required' => true,
+							'validations' => array(
+								'email' => true
+							)
+						),
+						'password' => array(
+							'required' => true,
+							'validations' => array(
+								'stringLength' => array(
+									'min' => 6,
+									'max' => 24
+								)
+							)
+						)
+					)
+				),
 				'logout' => array(
 					'model' => 'API\Model\Index',
 					'method' => 'logout'
