@@ -30,6 +30,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface
 		return array(
 			'abstract_factories' => array(
 				'API\Model\Factory\AbstractFactory',
+				'API\Form\Factory\AbstractFactory'
 			),
 			'factories' => array(
 				'API\Service\AuthenticationService' => 'API\Service\Factory\AuthenticationServiceFactory',
