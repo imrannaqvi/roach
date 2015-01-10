@@ -1,7 +1,7 @@
 <?php
 namespace API\Form;
 
-class LoginForm extends Form
+class Login extends Form
 {
 	private $name = 'login';
 	
