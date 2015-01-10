@@ -9,7 +9,7 @@ class Login extends Form
 		'autocomplete' => 'off'
 	);
 	
-	public $elements = array(
+	public $elements_data = array(
 		array(
 			'name' => 'username',
 			'attributes' => array(
