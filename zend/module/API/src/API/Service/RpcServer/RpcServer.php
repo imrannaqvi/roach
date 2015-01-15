@@ -95,12 +95,15 @@ class RpcServer
 		if(! method_exists($model, $item['method'])) {
 			return $this->response->setError('model-method-not-found')->toArray();
 		}
-		//validations
-		if(array_key_exists('parameters', $item)) {
-			try {
-				$params = $this->parseParameters($item['parameters'], $params);
-			} catch(\Exception $e) {
-				$this->response->setError($e->getOptions());
+		// form filters and validations
+		if(array_key_exists('form', $item)) {
+			
+			$form = $this->serviceLocator->get($item['form']);
+			$form->setData((array) $params);
+			if(! $form->isValid()) {
+				$this->response->setError($form->getMessages());
+			} else {
+				$params = (array) $form->getData();
 			}
 		}
 		//dispatch api methods
@@ -122,36 +125,5 @@ class RpcServer
 			}
 		}
 		return $this->response->toArray();
-	}
-	
-	/**
-	 * Parse data and return after validations and filters.
-	 *
-	 * @param array $cParams Parameters from api config.
-	 * @param array $data Data from request to be checked for validations and fitlers.
-	 *
-	 * @return array
-	 */
-	private function parseParameters($cParams, $data)
-	{
-		foreach($cParams as $key => $value) {
-			//check if required
-			if(
-				array_key_exists('required', (array) $value) &&
-				$value['required'] &&
-				! array_key_exists( $key, (array) $data)
-			){
-				throw new Exception(
-					"validation: '$key' is required.",
-					10,
-					null,
-					array(
-						'type' => 'required',
-						'param' => $key
-					)
-				);
-			}
-		}
-		return $data;
 	}
 }

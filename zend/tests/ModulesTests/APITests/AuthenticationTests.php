@@ -36,10 +36,10 @@ class AuthenticationTests extends AbstractHttpControllerTestCase
 			//'password' => $uid
 		));
 		$this->assertArrayHasKey('error', $response);
-		$this->assertArrayHasKey('type', (array) $response['error']);
-		$this->assertArrayHasKey('param', (array) $response['error']);
-		$this->assertEquals('required', $response['error']->type);
-		$this->assertEquals('password', $response['error']->param);
+		$this->assertArrayHasKey('password', (array) $response['error']);
+		$response = (array) $response['error'];
+		$response = (array) $response['password'];
+		$this->assertArrayHasKey('isEmpty', (array) $response);
 		//2 - send login request - correct
 		$response = $this->api('login', array(
 			'username' => $uid,

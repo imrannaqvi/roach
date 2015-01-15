@@ -27,15 +27,6 @@ class Login extends Form
 					array(
 						'name' => 'StringTrim'
 					)
-				),
-				'validators' => array(
-					array(
-						'name' => 'Regex',
-						'options' => array(
-							'pattern' => '/^[a-z0-9_.-]{1,50}+$/', // contain only a to z 0 to 9 underscore, hypen and space, min 1 max 50
-							'pattern_js' => '^[a-zA-Z0-9_\.\-]{1,50}$' 
-						)
-					)
 				)
 			)
 		),
@@ -55,15 +46,6 @@ class Login extends Form
 						'name' => 'StripTags'
 					), array(
 						'name' => 'StringTrim'
-					)
-				),
-				'validators' => array(
-					array(
-						'name' => 'Regex',
-						'options' => array(
-							'pattern' => '/^[a-z0-9_.-]{6,25}+$/', // contain only a to z 0 to 9 underscore, hypen and space, min 1 max 50
-							'pattern_js' => '^[a-zA-Z0-9_\.\-]{6,25}$' 
-						)
 					)
 				)
 			)
