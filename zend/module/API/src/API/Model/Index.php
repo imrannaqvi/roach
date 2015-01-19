@@ -6,17 +6,19 @@ class Index extends Model
 	public function login($params)
 	{
 		$token = false;
+		$acl = false;
+		$resultRow = false;
 		$this->authentication->getAdapter()
 		->setIdentity($params['username'])
 		->setCredential($params['password']);
 		$result = $this->authentication->authenticate();
-		$resultRow = false;
 		if ($result->isValid()) {
 			$resultRow = $this->authentication->getAdapter()->getResultRowObject();
 			$resultRow = $this->authentication->getStorage()->write($resultRow);
 			if(isset($resultRow->token)) {
 				//set acl user
 				$this->acl->setUser($resultRow);
+				$acl = $this->acl->serialize();
 				$token = $resultRow->token;
 				//unset specific keys for response
 				$resultRow = (array) $resultRow;
@@ -30,7 +32,7 @@ class Index extends Model
 		return array(
 			'$token' => $token,
 			'$user' => $resultRow,
-			'$acl' => $this->acl->serialize()
+			'$acl' => $acl
 		);
 	}
 	
