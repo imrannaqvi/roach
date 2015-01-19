@@ -119,8 +119,8 @@ class RpcServer
 				$this->response->exception = array(
 					'class' => get_class($e),
 					'message' => $e->getMessage(),
-					//'file' => $e->getFile().':'.$e->getLine(),
-					//'stack_trace' => $e->getTrace()
+					'file' => $e->getFile().':'.$e->getLine(),
+					'stack_trace' => $e->getTrace()
 				);
 			}
 		}
