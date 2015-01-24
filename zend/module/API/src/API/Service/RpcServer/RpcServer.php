@@ -97,7 +97,9 @@ class RpcServer
 		}
 		// form filters and validations
 		if(array_key_exists('form', $item)) {
-			
+			if(! $this->serviceLocator->has($item['form'])) {
+				return $this->response->setError('form-not-found')->toArray();
+			}
 			$form = $this->serviceLocator->get($item['form']);
 			$form->setData((array) $params);
 			if(! $form->isValid()) {
