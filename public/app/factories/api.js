@@ -58,10 +58,13 @@ function ($rootScope, $http, $q, ACL, localStorageService) {
 				headers: headers
 			}).success(function(data) {
 				console.info('API[' + method + ']', data);
-				if(! data.error ) {
+				if(! data.error && ! data.exception) {
 					that.internalLogic(data.response);
 					deferred.resolve(data.response);
 				} else {
+					if(data.exception) {
+						console.error('Server-side Exeption:', data.exception);
+					}
 					deferred.reject(data);
 				}
 				that.hideSpinner();
