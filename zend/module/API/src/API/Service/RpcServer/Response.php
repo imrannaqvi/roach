@@ -29,6 +29,19 @@ class Response
 	}
 	
 	/**
+	 * Set exception for current response object.
+	 *
+	 * @param mixed.
+	 *
+	 * @return API\Service\RpcServer\Response
+	 */
+	public function setException($exception)
+	{
+		$this->exception = $exception;
+		return $this;
+	}
+	
+	/**
 	 * Return response as array.
 	 *
 	 * @return array
