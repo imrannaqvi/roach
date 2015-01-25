@@ -12,7 +12,9 @@ return array(
 				),
 				'signup' => array(
 					'model' => 'API\Model\Index',
-					'method' => 'signup'
+					'method' => 'signup',
+					'authentication_required' => false,
+					'form' => 'API\Form\Signup'
 				),
 				'logout' => array(
 					'model' => 'API\Model\Index',
