@@ -1,13 +1,13 @@
 {
 	"name": "roach",
 	"dependencies": {
-		"jquery": "*",
-		"angular": "*",
-		"angular-route": "*",
-		"angular-animate": "*",
-		"bootstrap": "*",
-		"spin.js": "*",
-		"angular-local-storage": "*",
-		"angular-named-routes": "*"
+		"jquery": "2.1.3",
+		"angular": "1.3.8",
+		"angular-route": "1.3.8",
+		"angular-animate": "1.3.8",
+		"bootstrap": "3.3.1",
+		"spin.js": "2.0.1",
+		"angular-local-storage": "0.1.5",
+		"angular-named-routes": "0.0.16"
 	}
 }
